@@ -95,15 +95,19 @@ export function Calculator() {
                   <FormItem>
                     <FormLabel>Purchase Price ($)</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter purchase price"
-                        {...field}
-                        onChange={e => {
-                          field.onChange(Number(e.target.value));
-                          form.handleSubmit(onSubmit)();
-                        }}
-                      />
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                        <Input
+                          type="number"
+                          placeholder="Enter purchase price"
+                          className="pl-7"
+                          {...field}
+                          onChange={e => {
+                            field.onChange(Number(e.target.value));
+                            form.handleSubmit(onSubmit)();
+                          }}
+                        />
+                      </div>
                     </FormControl>
                   </FormItem>
                 )}
@@ -116,12 +120,16 @@ export function Calculator() {
                   <FormItem>
                     <FormLabel>Monthly Net Take-Home Pay ($)</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter monthly net income"
-                        {...field}
-                        onChange={e => field.onChange(Number(e.target.value))}
-                      />
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                        <Input
+                          type="number"
+                          placeholder="Enter monthly net income"
+                          className="pl-7"
+                          {...field}
+                          onChange={e => field.onChange(Number(e.target.value))}
+                        />
+                      </div>
                     </FormControl>
                   </FormItem>
                 )}
@@ -157,12 +165,16 @@ export function Calculator() {
                     <FormItem>
                       <FormLabel>Monthly HOA ($)</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="HOA fees"
-                          {...field}
-                          onChange={e => field.onChange(Number(e.target.value))}
-                        />
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                          <Input
+                            type="number"
+                            placeholder="HOA fees"
+                            className="pl-7"
+                            {...field}
+                            onChange={e => field.onChange(Number(e.target.value))}
+                          />
+                        </div>
                       </FormControl>
                     </FormItem>
                   )}
@@ -175,12 +187,16 @@ export function Calculator() {
                     <FormItem>
                       <FormLabel>Annual Property Taxes ($)</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Annual taxes"
-                          {...field}
-                          onChange={e => field.onChange(Number(e.target.value))}
-                        />
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                          <Input
+                            type="number"
+                            placeholder="Annual taxes"
+                            className="pl-7"
+                            {...field}
+                            onChange={e => field.onChange(Number(e.target.value))}
+                          />
+                        </div>
                       </FormControl>
                     </FormItem>
                   )}
@@ -215,12 +231,16 @@ export function Calculator() {
                     <FormItem>
                       <FormLabel>Monthly Insurance ($)</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Monthly insurance"
-                          {...field}
-                          onChange={e => field.onChange(Number(e.target.value))}
-                        />
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                          <Input
+                            type="number"
+                            placeholder="Monthly insurance"
+                            className="pl-7"
+                            {...field}
+                            onChange={e => field.onChange(Number(e.target.value))}
+                          />
+                        </div>
                       </FormControl>
                     </FormItem>
                   )}
@@ -234,12 +254,16 @@ export function Calculator() {
                   <FormItem>
                     <FormLabel>Renovation Budget ($)</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Renovation budget"
-                        {...field}
-                        onChange={e => field.onChange(Number(e.target.value))}
-                      />
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                        <Input
+                          type="number"
+                          placeholder="Renovation budget"
+                          className="pl-7"
+                          {...field}
+                          onChange={e => field.onChange(Number(e.target.value))}
+                        />
+                      </div>
                     </FormControl>
                   </FormItem>
                 )}
