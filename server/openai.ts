@@ -2,6 +2,15 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Fallback responses for testing and development
+const fallbackResponses = new Map<string, string>([
+  ['down payment', 'A typical down payment is 20% of the home\'s purchase price, though you can find options for as low as 3.5% with FHA loans. Keep in mind that a smaller down payment usually means paying for private mortgage insurance (PMI).'],
+  ['mortgage rates', 'Mortgage rates vary based on factors like credit score, down payment, and loan term. As of March 2025, 30-year fixed rates average around 6-7%. Contact a lender for personalized rates.'],
+  ['property taxes', 'Property taxes vary by location but typically range from 0.5% to 2.5% of the home\'s assessed value annually. Check with your local tax assessor\'s office for specific rates in your area.'],
+  ['home insurance', 'Home insurance costs typically range from $1,000 to $3,000 annually, depending on factors like location, coverage amount, and deductible. Shop around with different insurers for the best rates.'],
+  ['closing costs', 'Closing costs usually range from 2% to 5% of the loan amount. This includes fees for appraisal, title search, title insurance, loan origination, and other services.'],
+]);
+
 const SYSTEM_PROMPT = `You are a helpful assistant specialized in home buying and mortgages. Help users understand:
 - Monthly payment calculations
 - Down payment requirements
@@ -12,8 +21,29 @@ const SYSTEM_PROMPT = `You are a helpful assistant specialized in home buying an
 
 Keep responses concise and focused on the user's question.`;
 
+// Helper function to find the best matching fallback response
+function findBestFallbackResponse(message: string): string | null {
+  const normalizedMessage = message.toLowerCase();
+  for (const [key, value] of fallbackResponses) {
+    if (normalizedMessage.includes(key)) {
+      return value;
+    }
+  }
+  return null;
+}
+
 export async function handleChatMessage(message: string): Promise<string> {
   try {
+    // First, try to find a fallback response
+    const fallbackResponse = findBestFallbackResponse(message);
+    if (fallbackResponse) {
+      console.log("Using fallback response");
+      return fallbackResponse;
+    }
+
+    // If no fallback response exists, try using OpenAI API
+    console.log("No fallback response found, attempting OpenAI API call");
+
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
@@ -28,15 +58,7 @@ export async function handleChatMessage(message: string): Promise<string> {
   } catch (error: any) {
     console.error("OpenAI API error:", error);
 
-    // Check for specific error types and provide clear error messages
-    if (error.status === 429) {
-      throw new Error("API rate limit exceeded. Please try again in a few minutes.");
-    } else if (error.status === 401) {
-      throw new Error("Authentication error. Please check your API key.");
-    } else if (error.status === 404) {
-      throw new Error("The requested AI model is not available with your current API key.");
-    }
-
-    throw new Error("Failed to generate response: " + error.message);
+    // Return a generic response if OpenAI API fails
+    return "I'm currently operating in fallback mode. While I can help with basic questions about home buying, my responses are limited. Please try again later for more detailed assistance.";
   }
 }
