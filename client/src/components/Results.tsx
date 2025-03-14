@@ -3,18 +3,20 @@ import { formatCurrency, formatPercentage } from "@shared/calculations";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ResultsProps {
-  results: CalculationResult[];
+  downPaymentVariants: CalculationResult[];
   downPaymentPercents: number[];
+  priceVariants: CalculationResult[];
+  basePrice: number;
 }
 
-export function Results({ results, downPaymentPercents }: ResultsProps) {
-  return (
+export function Results({ downPaymentVariants, downPaymentPercents, priceVariants, basePrice }: ResultsProps) {
+  const ResultTable = ({ results, titles }: { results: CalculationResult[], titles: string[] }) => (
     <div className="grid gap-6 md:grid-cols-3">
       {results.map((result, index) => (
         <Card key={index} className="bg-card">
           <CardHeader>
             <CardTitle className="text-lg">
-              {formatPercentage(downPaymentPercents[index])} Down Payment
+              {titles[index]}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -65,6 +67,30 @@ export function Results({ results, downPaymentPercents }: ResultsProps) {
           </CardContent>
         </Card>
       ))}
+    </div>
+  );
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-2xl font-semibold mb-4">Down Payment Variations</h2>
+        <ResultTable 
+          results={downPaymentVariants} 
+          titles={downPaymentPercents.map(dp => `${formatPercentage(dp)} Down`)} 
+        />
+      </div>
+
+      <div>
+        <h2 className="text-2xl font-semibold mb-4">Purchase Price Variations</h2>
+        <ResultTable 
+          results={priceVariants} 
+          titles={[
+            `${formatCurrency(basePrice * 0.9)} (-10%)`,
+            `${formatCurrency(basePrice)}`,
+            `${formatCurrency(basePrice * 1.1)} (+10%)`
+          ]} 
+        />
+      </div>
     </div>
   );
 }

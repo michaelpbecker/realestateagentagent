@@ -12,7 +12,10 @@ import { Slider } from "@/components/ui/slider";
 import { Results } from "./Results";
 
 export function Calculator() {
-  const [results, setResults] = useState<CalculationResult[]>([]);
+  const [results, setResults] = useState<{
+    downPaymentVariants: CalculationResult[];
+    priceVariants: CalculationResult[];
+  }>({ downPaymentVariants: [], priceVariants: [] });
 
   const form = useForm({
     resolver: zodResolver(calculationFormSchema),
@@ -29,21 +32,16 @@ export function Calculator() {
   });
 
   function onSubmit(data: any) {
-    // Get the selected down payment percentage
+    // Calculate down payment variants
     const selectedDP = data.downPaymentPercent;
-
-    // Calculate the three percentages (selected, -10%, +10%)
-    // ensuring they stay within 0-100% range
     const downPayments = [
       Math.max(0, selectedDP - 10),
       selectedDP,
       Math.min(100, selectedDP + 10)
-    ].sort((a, b) => a - b); // Sort to maintain ascending order
-
-    // Remove duplicates in case we hit the boundaries
+    ].sort((a, b) => a - b);
     const uniqueDownPayments = [...new Set(downPayments)];
 
-    const results = uniqueDownPayments.map(dp =>
+    const downPaymentVariants = uniqueDownPayments.map(dp =>
       calculateMortgage(
         data.purchasePrice,
         dp,
@@ -55,7 +53,30 @@ export function Calculator() {
       )
     );
 
-    setResults(results);
+    // Calculate purchase price variants
+    const selectedPrice = data.purchasePrice;
+    const prices = [
+      selectedPrice * 0.9,  // 10% below
+      selectedPrice,        // Selected price
+      selectedPrice * 1.1   // 10% above
+    ];
+
+    const priceVariants = prices.map(price =>
+      calculateMortgage(
+        price,
+        data.downPaymentPercent,
+        data.interestRate,
+        data.hoa,
+        data.taxes,
+        data.insurance,
+        data.monthlyNetIncome
+      )
+    );
+
+    setResults({
+      downPaymentVariants,
+      priceVariants
+    });
   }
 
   return (
@@ -78,7 +99,10 @@ export function Calculator() {
                         type="number"
                         placeholder="Enter purchase price"
                         {...field}
-                        onChange={e => field.onChange(Number(e.target.value))}
+                        onChange={e => {
+                          field.onChange(Number(e.target.value));
+                          form.handleSubmit(onSubmit)();
+                        }}
                       />
                     </FormControl>
                   </FormItem>
@@ -117,7 +141,6 @@ export function Calculator() {
                         value={[field.value]}
                         onValueChange={([value]) => {
                           field.onChange(value);
-                          // Trigger calculation on slider change
                           form.handleSubmit(onSubmit)();
                         }}
                       />
@@ -227,7 +250,14 @@ export function Calculator() {
         </CardContent>
       </Card>
 
-      {results.length > 0 && <Results results={results} downPaymentPercents={results.map(r => (r.downPayment / (r.downPayment + r.principal)) * 100)} />}
+      {(results.downPaymentVariants.length > 0 || results.priceVariants.length > 0) && (
+        <Results 
+          downPaymentVariants={results.downPaymentVariants}
+          downPaymentPercents={results.downPaymentVariants.map(r => (r.downPayment / (r.downPayment + r.principal)) * 100)}
+          priceVariants={results.priceVariants}
+          basePrice={form.getValues("purchasePrice")}
+        />
+      )}
     </div>
   );
 }
