@@ -38,18 +38,21 @@ export async function registerRoutes(app: Express) {
         return res.status(400).json({ error: "Message is required" });
       }
 
+      console.log("Processing chat message:", message); // Add logging
       const response = await handleChatMessage(message);
       res.json({ message: response });
     } catch (error: any) {
-      console.error("Chat error:", error);
-      // Check for specific OpenAI errors
-      if (error.status === 429) {
-        return res.status(429).json({ 
-          error: "The AI service is currently unavailable. Please try again in a few minutes." 
-        });
-      }
-      res.status(500).json({ 
-        error: "Failed to process chat message. Please try again later." 
+      console.error("Chat error details:", {
+        status: error.status,
+        message: error.message,
+        type: error.type,
+        code: error.code
+      });
+
+      // Preserve the original error status code if available
+      const statusCode = error.status || 500;
+      res.status(statusCode).json({ 
+        error: error.message || "Failed to process chat message" 
       });
     }
   });

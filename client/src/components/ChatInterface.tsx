@@ -40,6 +40,8 @@ export function ChatInterface() {
 
       setMessages(prev => [...prev, { role: "assistant", content: data.message }]);
     } catch (error: any) {
+      console.error("Chat error:", error); // Add client-side logging
+
       const errorMessage = error.message === "Failed to fetch" 
         ? "Unable to connect to the server. Please check your internet connection."
         : error.message;
