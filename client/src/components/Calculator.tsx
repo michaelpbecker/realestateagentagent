@@ -29,9 +29,21 @@ export function Calculator() {
   });
 
   function onSubmit(data: any) {
-    // Calculate for 50%, 60%, and 70% down payment
-    const downPayments = [50, 60, 70];
-    const results = downPayments.map(dp =>
+    // Get the selected down payment percentage
+    const selectedDP = data.downPaymentPercent;
+
+    // Calculate the three percentages (selected, -10%, +10%)
+    // ensuring they stay within 0-100% range
+    const downPayments = [
+      Math.max(0, selectedDP - 10),
+      selectedDP,
+      Math.min(100, selectedDP + 10)
+    ].sort((a, b) => a - b); // Sort to maintain ascending order
+
+    // Remove duplicates in case we hit the boundaries
+    const uniqueDownPayments = [...new Set(downPayments)];
+
+    const results = uniqueDownPayments.map(dp =>
       calculateMortgage(
         data.purchasePrice,
         dp,
@@ -96,14 +108,18 @@ export function Calculator() {
                 name="downPaymentPercent"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Down Payment %</FormLabel>
+                    <FormLabel>Down Payment {field.value}%</FormLabel>
                     <FormControl>
                       <Slider
                         min={0}
                         max={100}
-                        step={1}
+                        step={5}
                         value={[field.value]}
-                        onValueChange={([value]) => field.onChange(value)}
+                        onValueChange={([value]) => {
+                          field.onChange(value);
+                          // Trigger calculation on slider change
+                          form.handleSubmit(onSubmit)();
+                        }}
                       />
                     </FormControl>
                   </FormItem>
@@ -211,7 +227,7 @@ export function Calculator() {
         </CardContent>
       </Card>
 
-      {results.length > 0 && <Results results={results} />}
+      {results.length > 0 && <Results results={results} downPaymentPercents={results.map(r => (r.downPayment / (r.downPayment + r.principal)) * 100)} />}
     </div>
   );
 }

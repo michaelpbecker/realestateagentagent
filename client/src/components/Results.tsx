@@ -4,16 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ResultsProps {
   results: CalculationResult[];
+  downPaymentPercents: number[];
 }
 
-export function Results({ results }: ResultsProps) {
+export function Results({ results, downPaymentPercents }: ResultsProps) {
   return (
     <div className="grid gap-6 md:grid-cols-3">
       {results.map((result, index) => (
         <Card key={index} className="bg-card">
           <CardHeader>
             <CardTitle className="text-lg">
-              {index === 0 ? "50%" : index === 1 ? "60%" : "70%"} Down Payment
+              {formatPercentage(downPaymentPercents[index])} Down Payment
             </CardTitle>
           </CardHeader>
           <CardContent>
