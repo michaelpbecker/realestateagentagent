@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Results } from "./Results";
 
-export function Calculator() {
+export function Calculator({ initialPrice = 625000 }: { initialPrice?: number }) {
   const [results, setResults] = useState<{
     downPaymentVariants: CalculationResult[];
     priceVariants: CalculationResult[];
@@ -20,7 +20,7 @@ export function Calculator() {
   const form = useForm({
     resolver: zodResolver(calculationFormSchema),
     defaultValues: {
-      purchasePrice: 625000,
+      purchasePrice: initialPrice,
       downPaymentPercent: 60,
       hoa: 819,
       taxes: 1000,
