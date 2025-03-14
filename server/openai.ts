@@ -34,15 +34,8 @@ function findBestFallbackResponse(message: string): string | null {
 
 export async function handleChatMessage(message: string): Promise<string> {
   try {
-    // First, try to find a fallback response
-    const fallbackResponse = findBestFallbackResponse(message);
-    if (fallbackResponse) {
-      console.log("Using fallback response");
-      return fallbackResponse;
-    }
-
-    // If no fallback response exists, try using OpenAI API
-    console.log("No fallback response found, attempting OpenAI API call");
+    // First try using OpenAI API
+    console.log("Attempting OpenAI API call");
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -58,7 +51,14 @@ export async function handleChatMessage(message: string): Promise<string> {
   } catch (error: any) {
     console.error("OpenAI API error:", error);
 
-    // Return a generic response if OpenAI API fails
-    return "I'm currently operating in fallback mode. While I can help with basic questions about home buying, my responses are limited. Please try again later for more detailed assistance.";
+    // If API fails, try fallback response
+    const fallbackResponse = findBestFallbackResponse(message);
+    if (fallbackResponse) {
+      console.log("Using fallback response");
+      return fallbackResponse;
+    }
+
+    // Return a generic response if both OpenAI API and fallback fail
+    return "I'm currently experiencing technical difficulties. While I can help with basic questions about home buying, my responses may be limited. Please try again later for more detailed assistance.";
   }
 }
