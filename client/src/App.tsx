@@ -6,7 +6,10 @@ import NotFound from "@/pages/not-found";
 import Intro from "@/pages/intro";
 import Calculator from "@/pages/calculator";
 
+console.log('App component is being rendered'); // Debug log
+
 function Router() {
+  console.log('Router component is being rendered'); // Debug log
   return (
     <Switch>
       <Route path="/" component={Intro} />
@@ -17,6 +20,7 @@ function Router() {
 }
 
 function App() {
+  console.log('App function is being executed'); // Debug log
   return (
     <QueryClientProvider client={queryClient}>
       <Router />
