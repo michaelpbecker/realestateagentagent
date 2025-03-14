@@ -3,8 +3,24 @@ import { createServer } from "http";
 import { storage } from "./storage";
 import { handleChatMessage } from "./openai";
 import { calculationFormSchema } from "@shared/schema";
+import { searchProperties } from "./zillow";
 
 export async function registerRoutes(app: Express) {
+  app.get("/api/properties/search", async (req, res) => {
+    try {
+      const query = req.query.q as string;
+      if (!query) {
+        return res.status(400).json({ error: "Search query is required" });
+      }
+
+      const properties = await searchProperties(query);
+      res.json({ properties, totalResults: properties.length });
+    } catch (error) {
+      console.error("Search error:", error);
+      res.status(500).json({ error: "Failed to search properties" });
+    }
+  });
+
   app.post("/api/calculations", async (req, res) => {
     try {
       const data = calculationFormSchema.parse(req.body);
