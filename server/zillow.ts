@@ -3,31 +3,43 @@ import { Property } from '@shared/types';
 
 export async function searchProperties(location: string): Promise<Property[]> {
   const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    headless: 'new',
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--single-process'
+    ]
   });
 
   try {
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
-    
+
     // Format the search URL
     const searchUrl = `https://www.zillow.com/homes/${encodeURIComponent(location)}_rb/`;
-    await page.goto(searchUrl, { waitUntil: 'networkidle0' });
+    console.log('Searching Zillow URL:', searchUrl);
+
+    await page.goto(searchUrl, { waitUntil: 'networkidle0', timeout: 30000 });
+    console.log('Page loaded successfully');
 
     // Wait for the property cards to load
     await page.waitForSelector('[data-test="property-card"]', { timeout: 10000 });
+    console.log('Found property cards');
 
     // Extract property information
     const properties = await page.evaluate(() => {
       const cards = document.querySelectorAll('[data-test="property-card"]');
+      console.log('Number of cards found:', cards.length);
+
       return Array.from(cards).map((card) => {
         const priceElement = card.querySelector('[data-test="property-card-price"]');
         const addressElement = card.querySelector('[data-test="property-card-addr"]');
         const imageElement = card.querySelector('img');
-        
+
         const price = priceElement ? 
           parseInt(priceElement.textContent?.replace(/[^0-9]/g, '') || '0') : 0;
-        
+
         return {
           id: card.getAttribute('id') || Math.random().toString(),
           address: addressElement?.textContent?.trim() || '',
@@ -44,6 +56,7 @@ export async function searchProperties(location: string): Promise<Property[]> {
       });
     });
 
+    console.log('Extracted properties:', properties.length);
     return properties.filter(p => p.price > 0 && p.address);
   } catch (error) {
     console.error('Zillow scraping error:', error);
