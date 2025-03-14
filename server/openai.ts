@@ -15,7 +15,7 @@ Keep responses concise and focused on the user's question.`;
 export async function handleChatMessage(message: string): Promise<string> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: message }
@@ -28,11 +28,13 @@ export async function handleChatMessage(message: string): Promise<string> {
   } catch (error: any) {
     console.error("OpenAI API error:", error);
 
-    // Check for specific error types
+    // Check for specific error types and provide clear error messages
     if (error.status === 429) {
       throw new Error("API rate limit exceeded. Please try again in a few minutes.");
     } else if (error.status === 401) {
       throw new Error("Authentication error. Please check your API key.");
+    } else if (error.status === 404) {
+      throw new Error("The requested AI model is not available with your current API key.");
     }
 
     throw new Error("Failed to generate response: " + error.message);
