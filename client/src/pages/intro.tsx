@@ -27,7 +27,7 @@ export default function Intro() {
           </p>
         </div>
 
-        <Link href="/search">
+        <Link href="/calculator/625000">
           <Button size="lg" className="text-lg px-8 bg-foreground text-background hover:bg-foreground/90">
             Let's Find Your Home
           </Button>
