@@ -7,10 +7,10 @@ export default function Intro() {
     <div className="min-h-screen bg-gradient-to-b from-background to-muted flex items-center">
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="flex justify-center mb-8">
-          <LucideHome className="h-24 w-24 text-foreground" />
+          <LucideHome className="h-24 w-24 text-primary" />
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-extrabold mb-6 text-foreground tracking-tight">
+        <h1 className="text-4xl md:text-6xl font-extrabold mb-6 text-primary tracking-tight">
           Real Estate Agent... Agent
         </h1>
 
@@ -28,7 +28,7 @@ export default function Intro() {
         </div>
 
         <Link href="/calculator/625000">
-          <Button size="lg" className="text-lg px-8 bg-foreground text-background hover:bg-foreground/90">
+          <Button size="lg" className="text-lg px-8 bg-primary text-primary-foreground hover:bg-primary/90">
             Let's Find Your Home
           </Button>
         </Link>
