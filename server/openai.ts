@@ -1,6 +1,5 @@
 import OpenAI from "openai";
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const SYSTEM_PROMPT = `You are a helpful assistant specialized in home buying and mortgages. Help users understand:
@@ -16,7 +15,7 @@ Keep responses concise and focused on the user's question.`;
 export async function handleChatMessage(message: string): Promise<string> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4",
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: message }
@@ -26,8 +25,16 @@ export async function handleChatMessage(message: string): Promise<string> {
     });
 
     return response.choices[0].message.content || "I'm sorry, I couldn't generate a response.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("OpenAI API error:", error);
-    throw new Error("Failed to generate response");
+
+    // Check for specific error types
+    if (error.status === 429) {
+      throw new Error("API rate limit exceeded. Please try again in a few minutes.");
+    } else if (error.status === 401) {
+      throw new Error("Authentication error. Please check your API key.");
+    }
+
+    throw new Error("Failed to generate response: " + error.message);
   }
 }
