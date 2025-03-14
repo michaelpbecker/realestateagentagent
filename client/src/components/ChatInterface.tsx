@@ -50,11 +50,11 @@ export function ChatInterface() {
   }
 
   return (
-    <Card className="h-[600px] flex flex-col">
+    <Card className="h-[calc(100vh-8rem)] sticky top-8">
       <CardHeader>
         <CardTitle>Ask Questions</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col">
+      <CardContent className="flex-1 flex flex-col h-[calc(100%-5rem)]">
         <ScrollArea className="flex-1 pr-4 mb-4">
           <div className="space-y-4">
             {messages.map((message, i) => (

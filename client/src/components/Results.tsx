@@ -13,7 +13,7 @@ export function Results({ downPaymentVariants, downPaymentPercents, priceVariant
   const ResultTable = ({ results, titles }: { results: CalculationResult[], titles: string[] }) => (
     <div className="grid gap-6 md:grid-cols-3">
       {results.map((result, index) => (
-        <Card key={index} className="bg-card">
+        <Card key={index} className="bg-muted">
           <CardHeader>
             <CardTitle className="text-lg">
               {titles[index]}
@@ -71,26 +71,31 @@ export function Results({ downPaymentVariants, downPaymentPercents, priceVariant
   );
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-semibold mb-4">Down Payment Variations</h2>
-        <ResultTable 
-          results={downPaymentVariants} 
-          titles={downPaymentPercents.map(dp => `${formatPercentage(dp)} Down`)} 
-        />
-      </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Results Summary</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-8">
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Down Payment Variations</h3>
+          <ResultTable 
+            results={downPaymentVariants} 
+            titles={downPaymentPercents.map(dp => `${formatPercentage(dp)} Down`)} 
+          />
+        </div>
 
-      <div>
-        <h2 className="text-2xl font-semibold mb-4">Purchase Price Variations</h2>
-        <ResultTable 
-          results={priceVariants} 
-          titles={[
-            `${formatCurrency(basePrice * 0.9)} (-10%)`,
-            `${formatCurrency(basePrice)}`,
-            `${formatCurrency(basePrice * 1.1)} (+10%)`
-          ]} 
-        />
-      </div>
-    </div>
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Purchase Price Variations</h3>
+          <ResultTable 
+            results={priceVariants} 
+            titles={[
+              `${formatCurrency(basePrice * 0.9)} (-10%)`,
+              `${formatCurrency(basePrice)}`,
+              `${formatCurrency(basePrice * 1.1)} (+10%)`
+            ]} 
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
