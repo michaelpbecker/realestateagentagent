@@ -23,7 +23,7 @@ export default function Intro() {
             It all comes down to two simple questions: Do you love the home? And can you afford it?
           </p>
           <p className="font-medium text-foreground">
-            I'm your AI real estate assistant, ready to help you crunch those numbers and find your dream home.
+            I'm your Real Estate Agent... Agent, ready to help you crunch those numbers and find your dream home.
           </p>
         </div>
 
