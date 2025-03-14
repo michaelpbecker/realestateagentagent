@@ -77,6 +77,7 @@ export function ChatInterface() {
             value={input}
             onChange={e => setInput(e.target.value)}
             placeholder="Ask about home buying..."
+            aria-label="Ask about home buying"
             className="resize-none text-sm md:text-base"
             onKeyDown={e => {
               if (e.key === "Enter" && !e.shiftKey) {
@@ -89,6 +90,7 @@ export function ChatInterface() {
             onClick={sendMessage}
             disabled={isLoading}
             className="px-3"
+            aria-label="Send message"
           >
             <SendHorizontal className="h-4 w-4 md:h-5 md:w-5" />
           </Button>

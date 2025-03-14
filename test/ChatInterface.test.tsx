@@ -14,13 +14,16 @@ describe('ChatInterface', () => {
   });
 
   it('renders chat interface correctly', () => {
-    render(
+    const { debug } = render(
       <Toaster>
         <ChatInterface />
       </Toaster>
     );
 
-    expect(screen.getByPlaceholderText('Ask about home buying...')).toBeInTheDocument();
+    // Debug output to see what's actually rendered
+    debug();
+
+    expect(screen.getByRole('textbox', { name: /ask about home buying/i })).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
 
@@ -36,7 +39,7 @@ describe('ChatInterface', () => {
       </Toaster>
     );
 
-    const input = screen.getByPlaceholderText('Ask about home buying...');
+    const input = screen.getByRole('textbox', { name: /ask about home buying/i });
     const button = screen.getByRole('button');
 
     fireEvent.change(input, { target: { value: 'What is a good down payment?' } });
@@ -60,7 +63,7 @@ describe('ChatInterface', () => {
       </Toaster>
     );
 
-    const input = screen.getByPlaceholderText('Ask about home buying...');
+    const input = screen.getByRole('textbox', { name: /ask about home buying/i });
     const button = screen.getByRole('button');
 
     fireEvent.change(input, { target: { value: 'Test message' } });
