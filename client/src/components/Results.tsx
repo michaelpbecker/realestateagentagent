@@ -7,9 +7,10 @@ interface ResultsProps {
   downPaymentPercents: number[];
   priceVariants: CalculationResult[];
   basePrice: number;
+  renovationBudget: number;
 }
 
-export function Results({ downPaymentVariants, downPaymentPercents, priceVariants, basePrice }: ResultsProps) {
+export function Results({ downPaymentVariants, downPaymentPercents, priceVariants, basePrice, renovationBudget }: ResultsProps) {
   const ResultTable = ({ results, titles }: { results: CalculationResult[], titles: string[] }) => (
     <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
       {results.map((result, index) => (
@@ -61,6 +62,21 @@ export function Results({ downPaymentVariants, downPaymentPercents, priceVariant
                   <dd className={result.monthlyIncomePercentage > 35 ? "text-destructive font-medium" : "text-primary font-medium"}>
                     {formatPercentage(result.monthlyIncomePercentage)}
                   </dd>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t">
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Down Payment</dt>
+                  <dd className="font-medium">{formatCurrency(result.downPayment)}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Renovation Budget</dt>
+                  <dd className="font-medium">{formatCurrency(renovationBudget)}</dd>
+                </div>
+                <div className="flex justify-between mt-2 font-semibold">
+                  <dt>Liquid Funds Needed</dt>
+                  <dd>{formatCurrency(result.downPayment + renovationBudget)}</dd>
                 </div>
               </div>
             </dl>

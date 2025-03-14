@@ -93,7 +93,7 @@ export function Calculator() {
                 name="purchasePrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Purchase Price</FormLabel>
+                    <FormLabel>Purchase Price ($)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -114,7 +114,7 @@ export function Calculator() {
                 name="monthlyNetIncome"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Monthly Net Take-Home Pay</FormLabel>
+                    <FormLabel>Monthly Net Take-Home Pay ($)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -155,7 +155,7 @@ export function Calculator() {
                   name="hoa"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Monthly HOA</FormLabel>
+                      <FormLabel>Monthly HOA ($)</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -173,7 +173,7 @@ export function Calculator() {
                   name="taxes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Annual Property Taxes</FormLabel>
+                      <FormLabel>Annual Property Taxes ($)</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -191,14 +191,17 @@ export function Calculator() {
                   name="interestRate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Interest Rate %</FormLabel>
+                      <FormLabel>Interest Rate {field.value}%</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
-                          placeholder="Interest rate"
-                          {...field}
-                          onChange={e => field.onChange(Number(e.target.value))}
+                        <Slider
+                          min={0}
+                          max={15}
+                          step={0.25}
+                          value={[field.value]}
+                          onValueChange={([value]) => {
+                            field.onChange(value);
+                            form.handleSubmit(onSubmit)();
+                          }}
                         />
                       </FormControl>
                     </FormItem>
@@ -210,7 +213,7 @@ export function Calculator() {
                   name="insurance"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Monthly Insurance</FormLabel>
+                      <FormLabel>Monthly Insurance ($)</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -229,7 +232,7 @@ export function Calculator() {
                 name="renovationBudget"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Renovation Budget</FormLabel>
+                    <FormLabel>Renovation Budget ($)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -256,6 +259,7 @@ export function Calculator() {
           downPaymentPercents={results.downPaymentVariants.map(r => (r.downPayment / (r.downPayment + r.principal)) * 100)}
           priceVariants={results.priceVariants}
           basePrice={form.getValues("purchasePrice")}
+          renovationBudget={form.getValues("renovationBudget")}
         />
       )}
     </div>
