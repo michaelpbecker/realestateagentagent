@@ -13,7 +13,7 @@ import { Results } from "./Results";
 
 export function Calculator() {
   const [results, setResults] = useState<CalculationResult[]>([]);
-  
+
   const form = useForm({
     resolver: zodResolver(calculationFormSchema),
     defaultValues: {
@@ -24,23 +24,25 @@ export function Calculator() {
       interestRate: 7.0,
       insurance: 100,
       renovationBudget: 125000,
+      monthlyNetIncome: 15000,
     },
   });
 
   function onSubmit(data: any) {
     // Calculate for 50%, 60%, and 70% down payment
     const downPayments = [50, 60, 70];
-    const results = downPayments.map(dp => 
+    const results = downPayments.map(dp =>
       calculateMortgage(
         data.purchasePrice,
         dp,
         data.interestRate,
         data.hoa,
         data.taxes,
-        data.insurance
+        data.insurance,
+        data.monthlyNetIncome
       )
     );
-    
+
     setResults(results);
   }
 
@@ -63,6 +65,24 @@ export function Calculator() {
                       <Input
                         type="number"
                         placeholder="Enter purchase price"
+                        {...field}
+                        onChange={e => field.onChange(Number(e.target.value))}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="monthlyNetIncome"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Monthly Net Take-Home Pay</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter monthly net income"
                         {...field}
                         onChange={e => field.onChange(Number(e.target.value))}
                       />

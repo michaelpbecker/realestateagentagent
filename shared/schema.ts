@@ -11,6 +11,7 @@ export const calculations = pgTable("calculations", {
   interestRate: numeric("interest_rate").notNull(),
   insurance: numeric("insurance").notNull(),
   renovationBudget: numeric("renovation_budget").notNull(),
+  monthlyNetIncome: numeric("monthly_net_income").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -27,6 +28,7 @@ export const calculationFormSchema = z.object({
   interestRate: z.number().min(0).max(100),
   insurance: z.number().min(0),
   renovationBudget: z.number().min(0),
+  monthlyNetIncome: z.number().min(0),
 });
 
 export type InsertCalculation = z.infer<typeof insertCalculationSchema>;
