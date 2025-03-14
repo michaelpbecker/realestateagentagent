@@ -26,7 +26,7 @@ export async function registerRoutes(app: Express) {
       const data = calculationFormSchema.parse(req.body);
       const calculation = await storage.saveCalculation(data);
       res.json(calculation);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   });
@@ -40,8 +40,17 @@ export async function registerRoutes(app: Express) {
 
       const response = await handleChatMessage(message);
       res.json({ message: response });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to process chat message" });
+    } catch (error: any) {
+      console.error("Chat error:", error);
+      // Check for specific OpenAI errors
+      if (error.status === 429) {
+        return res.status(429).json({ 
+          error: "The AI service is currently unavailable. Please try again in a few minutes." 
+        });
+      }
+      res.status(500).json({ 
+        error: "Failed to process chat message. Please try again later." 
+      });
     }
   });
 

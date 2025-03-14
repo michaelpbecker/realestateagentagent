@@ -32,18 +32,26 @@ export function ChatInterface() {
         body: JSON.stringify({ message: input }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to get response");
+        throw new Error(data.error || "Failed to get response");
       }
 
-      const data = await response.json();
       setMessages(prev => [...prev, { role: "assistant", content: data.message }]);
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage = error.message === "Failed to fetch" 
+        ? "Unable to connect to the server. Please check your internet connection."
+        : error.message;
+
       toast({
         title: "Error",
-        description: "Failed to send message. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
+
+      // Remove the user's message if we couldn't get a response
+      setMessages(prev => prev.slice(0, -1));
     } finally {
       setIsLoading(false);
     }
