@@ -9,13 +9,13 @@ export default function Home() {
           Home Purchase Calculator
         </h1>
 
-        <p className="text-muted-foreground text-center mb-12">
+        <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
           Calculate your monthly payments and required funds for home purchase
         </p>
 
-        <div className="grid gap-8 lg:grid-cols-[2fr,1fr] items-start">
+        <div className="grid gap-8 lg:grid-cols-[2fr,1fr] grid-cols-1 items-start">
           <Calculator />
-          <div className="sticky top-8">
+          <div className="lg:sticky lg:top-8">
             <ChatInterface />
           </div>
         </div>

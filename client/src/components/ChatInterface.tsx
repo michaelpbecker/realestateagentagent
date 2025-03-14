@@ -50,7 +50,7 @@ export function ChatInterface() {
   }
 
   return (
-    <Card className="h-[calc(100vh-8rem)] sticky top-8">
+    <Card className="h-[calc(100vh-8rem)] lg:sticky lg:top-8">
       <CardHeader>
         <CardTitle>Ask Questions</CardTitle>
       </CardHeader>
@@ -60,10 +60,10 @@ export function ChatInterface() {
             {messages.map((message, i) => (
               <div
                 key={i}
-                className={`p-3 rounded-lg ${
+                className={`p-3 rounded-lg text-sm md:text-base ${
                   message.role === "user"
-                    ? "bg-primary text-primary-foreground ml-8"
-                    : "bg-muted mr-8"
+                    ? "bg-primary text-primary-foreground ml-4 md:ml-8"
+                    : "bg-muted mr-4 md:mr-8"
                 }`}
               >
                 {message.content}
@@ -77,7 +77,7 @@ export function ChatInterface() {
             value={input}
             onChange={e => setInput(e.target.value)}
             placeholder="Ask about home buying..."
-            className="resize-none"
+            className="resize-none text-sm md:text-base"
             onKeyDown={e => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -90,7 +90,7 @@ export function ChatInterface() {
             disabled={isLoading}
             className="px-3"
           >
-            <SendHorizontal className="h-5 w-5" />
+            <SendHorizontal className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
         </div>
       </CardContent>

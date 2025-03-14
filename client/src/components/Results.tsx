@@ -11,7 +11,7 @@ interface ResultsProps {
 
 export function Results({ downPaymentVariants, downPaymentPercents, priceVariants, basePrice }: ResultsProps) {
   const ResultTable = ({ results, titles }: { results: CalculationResult[], titles: string[] }) => (
-    <div className="grid gap-6 md:grid-cols-3">
+    <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
       {results.map((result, index) => (
         <Card key={index} className="bg-muted">
           <CardHeader>
@@ -20,7 +20,7 @@ export function Results({ downPaymentVariants, downPaymentPercents, priceVariant
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <dl className="space-y-2">
+            <dl className="space-y-2 text-sm md:text-base">
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">Monthly Payment</dt>
                 <dd className="font-medium">{formatCurrency(result.monthlyPayment)}</dd>
