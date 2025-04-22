@@ -18,8 +18,9 @@ COPY client/ ./client/
 COPY server/ ./server/
 COPY shared/ ./shared/
 
-# Ensure theme.json exists in client directory
+# Ensure theme.json exists and is in the correct location
 RUN test -f client/theme.json || (echo "theme.json not found in client directory" && exit 1)
+RUN cp client/theme.json ./
 
 # Build the application
 RUN npm run build
