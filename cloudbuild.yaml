@@ -21,10 +21,8 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
-      - '--set-secrets'
-      - 'OPENAI_API_KEY=openai-api-key:latest'
-      - '--port'
-      - '3000'
+      - '--set-env-vars'
+      - 'OPENAI_API_KEY=test-api-key'
 
 images:
   - 'gcr.io/$PROJECT_ID/realestateagentagent'
