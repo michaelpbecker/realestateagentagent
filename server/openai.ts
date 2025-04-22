@@ -1,6 +1,14 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Initialize OpenAI only if API key is available
+let openai: OpenAI | null = null;
+try {
+  if (process.env.OPENAI_API_KEY) {
+    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+} catch (error) {
+  console.log("OpenAI initialization failed, using fallback responses only");
+}
 
 // Fallback responses for testing and development
 const fallbackResponses = new Map<string, string>([
@@ -34,31 +42,41 @@ function findBestFallbackResponse(message: string): string | null {
 
 export async function handleChatMessage(message: string): Promise<string> {
   try {
-    // First try using OpenAI API
-    console.log("Attempting OpenAI API call");
+    // First try using OpenAI API if available
+    if (openai) {
+      console.log("Attempting OpenAI API call");
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: message }
+        ],
+        temperature: 0.7,
+        max_tokens: 500,
+      });
+      return response.choices[0].message.content || "I'm sorry, I couldn't generate a response.";
+    }
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: message }
-      ],
-      temperature: 0.7,
-      max_tokens: 500,
-    });
-
-    return response.choices[0].message.content || "I'm sorry, I couldn't generate a response.";
-  } catch (error: any) {
-    console.error("OpenAI API error:", error);
-
-    // If API fails, try fallback response
+    // If OpenAI is not available, try fallback response
     const fallbackResponse = findBestFallbackResponse(message);
     if (fallbackResponse) {
       console.log("Using fallback response");
       return fallbackResponse;
     }
 
+    // Return a generic response if fallback fails
+    return "I can help with questions about down payments, mortgage rates, property taxes, home insurance, and closing costs. Please try asking about one of these topics.";
+  } catch (error: any) {
+    console.error("Error in handleChatMessage:", error);
+
+    // If API fails, try fallback response
+    const fallbackResponse = findBestFallbackResponse(message);
+    if (fallbackResponse) {
+      console.log("Using fallback response after error");
+      return fallbackResponse;
+    }
+
     // Return a generic response if both OpenAI API and fallback fail
-    return "I'm currently experiencing technical difficulties. While I can help with basic questions about home buying, my responses may be limited. Please try again later for more detailed assistance.";
+    return "I can help with questions about down payments, mortgage rates, property taxes, home insurance, and closing costs. Please try asking about one of these topics.";
   }
 }
