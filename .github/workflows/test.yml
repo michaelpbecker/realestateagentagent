@@ -26,7 +26,12 @@ jobs:
     - name: Install dependencies
       run: |
         npm ci
-        npm install -D vitest@0.33.0 @vitest/coverage-v8@0.33.0 @testing-library/dom @testing-library/jest-dom @testing-library/react @testing-library/user-event drizzle-orm@0.42.0 istanbul-lib-source-maps@4.0.1 --legacy-peer-deps
+        npm install -D vitest@0.33.0 @vitest/coverage-v8@0.33.0 @testing-library/dom @testing-library/jest-dom @testing-library/react @testing-library/user-event drizzle-orm@0.42.0 istanbul-lib-source-maps@4.0.1 @replit/vite-plugin-shadcn-theme-json --legacy-peer-deps
+
+    - name: Create theme.json
+      run: |
+        mkdir -p client
+        cp theme.json client/theme.json
 
     - name: Run tests
       run: npm test
