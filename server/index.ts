@@ -34,7 +34,7 @@ if (process.env.NODE_ENV === "production") {
   await setupDevelopment(app, server);
 }
 
-const port = process.env.PORT || 3000;
-server.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+server.listen(port, "0.0.0.0", () => {
+  console.log(`Server running at http://0.0.0.0:${port}`);
 });
