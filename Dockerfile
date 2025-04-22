@@ -36,6 +36,9 @@ COPY package*.json ./
 # Install production dependencies only
 RUN npm ci --only=production
 
+# Create necessary directories
+RUN mkdir -p dist/public server/dist shared/dist
+
 # Copy built files from build stage
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/server/dist ./server/dist
