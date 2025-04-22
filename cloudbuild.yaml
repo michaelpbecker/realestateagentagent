@@ -23,6 +23,8 @@ steps:
       - '--allow-unauthenticated'
       - '--set-secrets'
       - 'OPENAI_API_KEY=openai-api-key:latest'
+      - '--port'
+      - '3000'
 
 images:
   - 'gcr.io/$PROJECT_ID/realestateagentagent'
