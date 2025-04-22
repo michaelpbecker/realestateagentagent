@@ -25,8 +25,13 @@ app.use("/api", apiRouter);
 if (process.env.NODE_ENV === "production") {
   const publicDir = path.resolve(__dirname, "..", "dist", "public");
   console.log("Serving static files from:", publicDir);
+  
+  // Serve static files
   app.use(express.static(publicDir));
+  
+  // Handle all other routes by serving index.html
   app.get("*", (req, res) => {
+    console.log("Handling request for:", req.path);
     res.sendFile(path.join(publicDir, "index.html"));
   });
 } else {
