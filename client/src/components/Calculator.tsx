@@ -283,7 +283,10 @@ export function Calculator({ initialPrice = 625000 }: { initialPrice?: number })
                 )}
               />
 
-              <Button type="submit" className="w-full">
+              <Button 
+                type="submit" 
+                className="w-full bg-[#3b82f6] text-white hover:bg-[#2563eb] transition-colors"
+              >
                 Calculate
               </Button>
             </form>
