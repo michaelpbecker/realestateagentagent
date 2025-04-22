@@ -1,5 +1,6 @@
 {
   "variant": "default",
+  "appearance": "light",
   "primary": "221.2 83.2% 53.3%",
   "primary-foreground": "210 40% 98%",
   "secondary": "210 40% 96.1%",
