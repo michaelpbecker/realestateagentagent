@@ -12,9 +12,7 @@ export default defineConfig({
   plugins: [
     react(),
     runtimeErrorOverlay(),
-    themePlugin({
-      themePath: path.resolve(__dirname, "theme.json"),
-    }),
+    themePlugin(),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
       ? [

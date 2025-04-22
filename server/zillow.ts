@@ -3,13 +3,8 @@ import { Property } from '@shared/types';
 
 export async function searchProperties(location: string): Promise<Property[]> {
   const browser = await puppeteer.launch({
-    headless: 'new',
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--single-process'
-    ]
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
 
   try {
@@ -63,5 +58,24 @@ export async function searchProperties(location: string): Promise<Property[]> {
     return [];
   } finally {
     await browser.close();
+  }
+}
+
+export async function getZillowData(url: string) {
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+
+  try {
+    const page = await browser.newPage();
+    await page.goto(url);
+    
+    // Add your Zillow scraping logic here
+    
+    await browser.close();
+  } catch (error) {
+    await browser.close();
+    throw error;
   }
 }

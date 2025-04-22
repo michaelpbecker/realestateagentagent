@@ -3,9 +3,10 @@ import fs from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer, createLogger } from "vite";
+import type { Server } from 'http';
+import type { IncomingMessage, ServerResponse } from 'http';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-import { type Server } from "http";
 import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 
@@ -22,11 +23,26 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
+export async function createServer(httpServer: Server<typeof IncomingMessage, typeof ServerResponse>) {
+  const vite = await createViteServer({
+    server: {
+      middlewareMode: true,
+      hmr: {
+        server: httpServer
+      },
+      allowedHosts: ['localhost', '127.0.0.1']
+    },
+    appType: 'custom'
+  });
+
+  return vite;
+}
+
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
-    allowedHosts: true,
+    allowedHosts: ['localhost', '127.0.0.1'],
   };
 
   const vite = await createViteServer({
