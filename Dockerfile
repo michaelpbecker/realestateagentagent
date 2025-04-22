@@ -49,10 +49,10 @@ COPY --from=build /app/shared/dist ./shared/dist
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=8080
+ENV PORT=3000
 
 # Expose the port
-EXPOSE 8080
+EXPOSE 3000
 
 # Start the application
 CMD ["node", "server/dist/index.js"] 
