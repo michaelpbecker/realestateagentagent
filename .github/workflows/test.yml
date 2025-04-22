@@ -32,6 +32,7 @@ jobs:
         CI: true
         NODE_ENV: test
         VITEST_COVERAGE_PROVIDER: v8
+        SKIP_OPENAI_TEST: true
 
     - name: Run coverage
       run: npm run test:coverage
@@ -39,4 +40,4 @@ jobs:
         CI: true
         NODE_ENV: test
         VITEST_COVERAGE_PROVIDER: v8
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }} 
+        SKIP_OPENAI_TEST: true 
