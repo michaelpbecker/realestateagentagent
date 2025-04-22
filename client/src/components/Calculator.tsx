@@ -130,6 +130,7 @@ export function Calculator({ initialPrice = 625000 }: { initialPrice?: number })
                           className="pl-7"
                           {...field}
                           onChange={e => field.onChange(Number(e.target.value))}
+                          aria-label="Monthly Net Take-Home Pay"
                         />
                       </div>
                     </FormControl>
@@ -142,19 +143,25 @@ export function Calculator({ initialPrice = 625000 }: { initialPrice?: number })
                 name="downPaymentPercent"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="downPaymentPercent">Down Payment {field.value}%</FormLabel>
+                    <FormLabel htmlFor="downPaymentPercent">Down Payment</FormLabel>
                     <FormControl>
-                      <Slider
-                        id="downPaymentPercent"
-                        min={0}
-                        max={100}
-                        step={5}
-                        value={[field.value]}
-                        onValueChange={([value]) => {
-                          field.onChange(value);
-                          form.handleSubmit(onSubmit)();
-                        }}
-                      />
+                      <div className="space-y-2">
+                        <Slider
+                          id="downPaymentPercent"
+                          min={0}
+                          max={100}
+                          step={5}
+                          value={[field.value]}
+                          onValueChange={([value]) => {
+                            field.onChange(value);
+                            form.handleSubmit(onSubmit)();
+                          }}
+                          aria-label="Down Payment Percentage"
+                        />
+                        <div className="text-sm text-muted-foreground text-center">
+                          {field.value}%
+                        </div>
+                      </div>
                     </FormControl>
                   </FormItem>
                 )}
