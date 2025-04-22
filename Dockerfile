@@ -37,7 +37,7 @@ COPY package*.json ./
 RUN npm ci --only=production
 
 # Copy built files from build stage
-COPY --from=build /app/client/dist ./client/dist
+COPY --from=build /app/dist ./dist
 COPY --from=build /app/server/dist ./server/dist
 COPY --from=build /app/shared/dist ./shared/dist
 
