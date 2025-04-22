@@ -31,9 +31,12 @@ jobs:
       env:
         CI: true
         NODE_ENV: test
+        VITEST_COVERAGE_PROVIDER: v8
 
     - name: Run coverage
       run: npm run test:coverage
       env:
         CI: true
-        NODE_ENV: test 
+        NODE_ENV: test
+        VITEST_COVERAGE_PROVIDER: v8
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }} 
