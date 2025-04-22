@@ -28,7 +28,10 @@ export default function Intro() {
         </div>
 
         <Link href="/calculator/625000">
-          <Button size="lg" className="text-lg px-8 bg-primary text-primary-foreground hover:bg-primary/90">
+          <Button 
+            size="lg" 
+            className="text-lg px-8 bg-[#3b82f6] text-white hover:bg-[#2563eb] transition-colors"
+          >
             Let's Find Your Home
           </Button>
         </Link>
