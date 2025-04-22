@@ -18,6 +18,9 @@ COPY client/ ./client/
 COPY server/ ./server/
 COPY shared/ ./shared/
 
+# Create necessary directories
+RUN mkdir -p dist/public server/dist shared/dist
+
 # Verify theme.json exists
 RUN test -f client/theme.json || (echo "theme.json not found in client directory" && exit 1)
 RUN cp client/theme.json ./
