@@ -36,8 +36,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install production dependencies
-RUN npm ci --only=production
+# Install production dependencies and required dev dependencies
+RUN npm ci --production=false
 
 # Create necessary directories
 RUN mkdir -p dist/public server/dist shared/dist
@@ -49,10 +49,10 @@ COPY --from=build /app/shared/dist ./shared/dist
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=8080
 
 # Expose the port
-EXPOSE 3000
+EXPOSE 8080
 
 # Start the application
 CMD ["node", "server/dist/index.js"] 
