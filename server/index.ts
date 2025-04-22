@@ -1,74 +1,40 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
+import 'dotenv/config';
+import express from "express";
+import morgan from "morgan";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
+import { createServer } from "http";
+import { apiRouter } from "./api/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
+const server = createServer(app);
+
+// Log API requests
+app.use(morgan("dev"));
+
+// Parse JSON bodies
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+// API routes
+app.use("/api", apiRouter);
 
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
-      console.log(logLine);
-    }
+// Serve static files in production, use Vite in development
+if (process.env.NODE_ENV === "production") {
+  const publicDir = path.resolve(__dirname, "..", "public");
+  app.use(express.static(publicDir));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(publicDir, "index.html"));
   });
+} else {
+  // Dynamic import of development setup to avoid loading Vite in production
+  const { setupDevelopment } = await import("./development.js");
+  await setupDevelopment(app, server);
+}
 
-  next();
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });
-
-(async () => {
-  const server = await registerRoutes(app);
-
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  // In production, serve static files and handle client-side routing
-  if (process.env.NODE_ENV === "production") {
-    const distPath = path.resolve(__dirname, "..", "public");
-    app.use(express.static(distPath));
-    app.get("*", (_req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
-  } else {
-    // In development, use Vite
-    const { setupVite } = await import("./vite");
-    await setupVite(app, server);
-  }
-
-  // Use PORT from environment variable or default to 3000
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
-  
-  // Ensure we're listening on all interfaces
-  server.listen(port, "0.0.0.0", () => {
-    console.log(`serving on port ${port}`);
-  });
-})();

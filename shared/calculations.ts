@@ -67,3 +67,27 @@ export function formatPercentage(value: number): string {
     maximumFractionDigits: 1,
   }).format(value / 100);
 }
+
+export function calculateMonthlyPayment(
+  homePrice: number,
+  downPayment: number,
+  interestRate: number,
+  loanTerm: number
+): number {
+  const principal = homePrice - downPayment;
+  const monthlyRate = interestRate / 12 / 100;
+  const numberOfPayments = loanTerm * 12;
+
+  const monthlyPayment =
+    (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
+    (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+
+  return Math.round(monthlyPayment * 100) / 100;
+}
+
+export function calculateDownPayment(
+  homePrice: number,
+  percentage: number
+): number {
+  return Math.round((homePrice * percentage) / 100);
+}

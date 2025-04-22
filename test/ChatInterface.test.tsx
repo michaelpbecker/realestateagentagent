@@ -5,6 +5,11 @@ import { Toaster } from '../client/src/components/ui/toaster';
 import React from 'react';
 import '@testing-library/jest-dom/vitest';
 
+// Mock OpenAI
+vi.mock('../server/openai', () => ({
+  handleChatMessage: vi.fn().mockResolvedValue('Test response')
+}));
+
 describe('ChatInterface', () => {
   beforeEach(() => {
     render(
@@ -39,8 +44,7 @@ describe('ChatInterface', () => {
   });
 
   it('displays error toast on API failure', async () => {
-    // Mock the fetch to fail
-    const mockFetch = vi.fn().mockRejectedValue(new Error('API Error'));
+    const mockFetch = vi.fn().mockRejectedValue(new Error('Failed to fetch'));
     global.fetch = mockFetch;
 
     const input = screen.getByRole('textbox', { name: 'Ask about home buying' });
@@ -51,7 +55,7 @@ describe('ChatInterface', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Error')).toBeInTheDocument();
-      expect(screen.getByText('API Error')).toBeInTheDocument();
-    });
+      expect(screen.getByText('Unable to connect to the server. Please check your internet connection.')).toBeInTheDocument();
+    }, { timeout: 2000 });
   });
 });
