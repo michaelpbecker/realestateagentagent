@@ -93,11 +93,12 @@ export function Calculator({ initialPrice = 625000 }: { initialPrice?: number })
                 name="purchasePrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Purchase Price ($)</FormLabel>
+                    <FormLabel htmlFor="purchasePrice">Purchase Price ($)</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                         <Input
+                          id="purchasePrice"
                           type="number"
                           placeholder="Enter purchase price"
                           className="pl-7"
@@ -118,16 +119,18 @@ export function Calculator({ initialPrice = 625000 }: { initialPrice?: number })
                 name="monthlyNetIncome"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Monthly Net Take-Home Pay ($)</FormLabel>
+                    <FormLabel htmlFor="monthlyNetIncome">Monthly Net Take-Home Pay ($)</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                         <Input
+                          id="monthlyNetIncome"
                           type="number"
                           placeholder="Enter monthly net income"
                           className="pl-7"
                           {...field}
                           onChange={e => field.onChange(Number(e.target.value))}
+                          aria-label="Monthly Net Take-Home Pay"
                         />
                       </div>
                     </FormControl>
@@ -140,18 +143,25 @@ export function Calculator({ initialPrice = 625000 }: { initialPrice?: number })
                 name="downPaymentPercent"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Down Payment {field.value}%</FormLabel>
+                    <FormLabel htmlFor="downPaymentPercent">Down Payment</FormLabel>
                     <FormControl>
-                      <Slider
-                        min={0}
-                        max={100}
-                        step={5}
-                        value={[field.value]}
-                        onValueChange={([value]) => {
-                          field.onChange(value);
-                          form.handleSubmit(onSubmit)();
-                        }}
-                      />
+                      <div className="space-y-2">
+                        <Slider
+                          id="downPaymentPercent"
+                          min={0}
+                          max={100}
+                          step={5}
+                          value={[field.value]}
+                          onValueChange={([value]) => {
+                            field.onChange(value);
+                            form.handleSubmit(onSubmit)();
+                          }}
+                          aria-label="Down Payment Percentage"
+                        />
+                        <div className="text-sm text-muted-foreground text-center">
+                          {field.value}%
+                        </div>
+                      </div>
                     </FormControl>
                   </FormItem>
                 )}
@@ -163,11 +173,12 @@ export function Calculator({ initialPrice = 625000 }: { initialPrice?: number })
                   name="hoa"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Monthly HOA ($)</FormLabel>
+                      <FormLabel htmlFor="hoa">Monthly HOA ($)</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                           <Input
+                            id="hoa"
                             type="number"
                             placeholder="HOA fees"
                             className="pl-7"
@@ -185,11 +196,12 @@ export function Calculator({ initialPrice = 625000 }: { initialPrice?: number })
                   name="taxes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Annual Property Taxes ($)</FormLabel>
+                      <FormLabel htmlFor="taxes">Annual Property Taxes ($)</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                           <Input
+                            id="taxes"
                             type="number"
                             placeholder="Annual taxes"
                             className="pl-7"
@@ -207,9 +219,10 @@ export function Calculator({ initialPrice = 625000 }: { initialPrice?: number })
                   name="interestRate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Interest Rate {field.value}%</FormLabel>
+                      <FormLabel htmlFor="interestRate">Interest Rate {field.value}%</FormLabel>
                       <FormControl>
                         <Slider
+                          id="interestRate"
                           min={0}
                           max={15}
                           step={0.25}
@@ -229,11 +242,12 @@ export function Calculator({ initialPrice = 625000 }: { initialPrice?: number })
                   name="insurance"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Monthly Insurance ($)</FormLabel>
+                      <FormLabel htmlFor="insurance">Monthly Insurance ($)</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                           <Input
+                            id="insurance"
                             type="number"
                             placeholder="Monthly insurance"
                             className="pl-7"

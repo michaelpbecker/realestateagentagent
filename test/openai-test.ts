@@ -1,6 +1,12 @@
 import OpenAI from "openai";
 
 async function testOpenAI() {
+  // Skip test if SKIP_OPENAI_TEST is set
+  if (process.env.SKIP_OPENAI_TEST) {
+    console.log("Skipping OpenAI API test as requested");
+    return;
+  }
+
   try {
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 

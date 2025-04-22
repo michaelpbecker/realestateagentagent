@@ -88,6 +88,8 @@ export function ChatInterface() {
             onChange={e => setInput(e.target.value)}
             placeholder="Ask about home buying..."
             aria-label="Ask about home buying"
+            role="textbox"
+            name="ask about home buying"
             className="resize-none text-sm md:text-base"
             onKeyDown={e => {
               if (e.key === "Enter" && !e.shiftKey) {
