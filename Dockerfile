@@ -46,7 +46,6 @@ RUN mkdir -p dist/public server/dist shared/dist
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/server/dist ./server/dist
 COPY --from=build /app/shared/dist ./shared/dist
-COPY --from=build /app/client/dist ./dist/public
 
 # Set environment variables
 ENV NODE_ENV=production
