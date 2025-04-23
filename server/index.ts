@@ -23,7 +23,7 @@ app.use("/api", apiRouter);
 
 // Serve static files in production, use Vite in development
 if (process.env.NODE_ENV === "production") {
-  const publicDir = path.resolve("/app/dist/public");
+  const publicDir = path.resolve(__dirname, "../dist/public");
   console.log("Serving static files from:", publicDir);
   
   // Serve static files

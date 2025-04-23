@@ -7,8 +7,13 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "shared/dist",
-    "declaration": true
+    "declaration": true,
+    "noEmit": false,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["shared/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "shared/dist"]
 } 
