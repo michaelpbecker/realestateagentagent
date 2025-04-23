@@ -23,7 +23,7 @@ app.use("/api", apiRouter);
 
 // Serve static files in production, use Vite in development
 if (process.env.NODE_ENV === "production") {
-  const publicDir = path.resolve(__dirname, "..", "dist", "public");
+  const publicDir = path.resolve("/app/dist/public");
   console.log("Serving static files from:", publicDir);
   
   // Serve static files
@@ -41,6 +41,14 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+console.log(`Starting server on port ${port}`);
+
+// Add error handling for the server
+server.on('error', (error) => {
+  console.error('Server error:', error);
+  process.exit(1);
+});
+
 server.listen(port, "0.0.0.0", () => {
   console.log(`Server running at http://0.0.0.0:${port}`);
 });

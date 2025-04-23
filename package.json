@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server/index.ts",
-    "build": "vite build && tsc -p tsconfig.json --outDir shared/dist --module esnext && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=server/dist",
+    "build": "rm -rf dist && mkdir -p dist/public && npm run build:shared && npm run build:client && npm run build:server",
+    "build:shared": "tsc -p tsconfig.shared.json",
+    "build:client": "vite build --outDir dist/public",
+    "build:server": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=server/dist",
     "start": "node server/dist/index.js",
     "test": "vitest",
     "test:coverage": "vitest run --coverage"
@@ -45,6 +48,7 @@
     "clsx": "^2.0.0",
     "cmdk": "^1.1.1",
     "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.29.5",
     "embla-carousel-react": "^8.6.0",
     "express": "^4.18.2",
     "input-otp": "^1.4.2",
@@ -82,17 +86,15 @@
     "@types/react-dom": "^18.2.17",
     "@types/supertest": "^6.0.3",
     "@vitejs/plugin-react": "^4.2.1",
-    "@vitest/coverage-v8": "^0.33.0",
+    "@vitest/coverage-v8": "^1.1.0",
     "autoprefixer": "^10.4.16",
-    "drizzle-orm": "^0.42.0",
     "esbuild": "^0.19.8",
-    "istanbul-lib-source-maps": "^4.0.1",
     "jsdom": "^23.0.1",
     "postcss": "^8.4.32",
     "supertest": "^7.1.0",
     "tailwindcss": "^3.3.6",
     "tsx": "^4.6.2",
     "typescript": "^5.3.3",
-    "vitest": "^0.33.0"
+    "vitest": "^1.1.0"
   }
 }
