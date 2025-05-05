@@ -29,6 +29,7 @@ RUN npm ci --production
 # Copy built files from build stage
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/server/dist ./server/dist
+COPY --from=build /app/shared/dist ./shared/dist
 
 # Set production environment
 ENV NODE_ENV=production
