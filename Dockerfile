@@ -35,5 +35,9 @@ COPY --from=build /app/shared/dist ./shared/dist
 ENV NODE_ENV=production
 ENV PORT=8080
 
+# Verify the build output
+RUN ls -la /app/dist/public && \
+    ls -la /app/server/dist
+
 # Start the server
 CMD ["node", "server/dist/index.js"] 

@@ -24,7 +24,7 @@ app.use("/api/calculations", calculationsRouter);
 
 // Serve static files in production
 if (process.env.NODE_ENV === "production") {
-  const publicDir = path.resolve(__dirname, "../dist/public");
+  const publicDir = path.resolve(__dirname, "../../dist/public");
   console.log("Serving static files from:", publicDir);
   
   // Serve static files
