@@ -1,6 +1,12 @@
 import OpenAI from "openai";
 
-// Log the API key status (but not the actual key)
+// Determine the environment
+const isTest = process.env.NODE_ENV === 'test';
+const isDevelopment = process.env.NODE_ENV === 'development';
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Log the environment and API key status
+console.log("Environment:", process.env.NODE_ENV || 'development');
 console.log("API Key Status:", process.env.OPENAI_API_KEY ? "Present" : "Missing");
 
 // Fallback responses for testing and development
@@ -26,10 +32,10 @@ function findBestFallbackResponse(message: string): string | null {
   return null;
 }
 
-// Create OpenAI client
+// Create OpenAI client with appropriate configuration
 export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  dangerouslyAllowBrowser: process.env.NODE_ENV === 'test',
+  dangerouslyAllowBrowser: isTest,
 });
 
 // Keep the system prompt for context
@@ -66,29 +72,77 @@ Keep responses concise and focused on the user's question. When analyzing a Zill
 
 export async function handleChatMessage(message: string): Promise<string> {
   try {
-    // Try using the API
-    console.log("Attempting OpenAI API call with message:", message);
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: message }
-      ],
-      temperature: 0.7,
-      max_tokens: 500,
-    });
-    return response.choices[0].message.content || "I'm sorry, I couldn't generate a response.";
-  } catch (error: any) {
-    console.error("Error in handleChatMessage:", error);
-
-    // If API fails, try fallback response
-    const fallbackResponse = findBestFallbackResponse(message);
-    if (fallbackResponse) {
-      console.log("Using fallback response after error");
-      return fallbackResponse;
+    // In production, always use the API
+    if (isProduction) {
+      if (!process.env.OPENAI_API_KEY) {
+        throw new Error('OpenAI API key is required in production');
+      }
+      console.log("Making production API call");
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: message }
+        ],
+        temperature: 0.7,
+        max_tokens: 500,
+      });
+      return response.choices[0].message.content || "I'm sorry, I couldn't generate a response.";
     }
 
-    // Return a generic response if both OpenAI API and fallback fail
+    // In test environment, use test API key or fallback
+    if (isTest) {
+      if (process.env.OPENAI_API_KEY === 'test-api-key') {
+        console.log("Using test API key");
+        const response = await openai.chat.completions.create({
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            { role: "user", content: message }
+          ],
+          temperature: 0.7,
+          max_tokens: 500,
+        });
+        return response.choices[0].message.content || "I'm sorry, I couldn't generate a response.";
+      }
+      // If no test API key, use fallback
+      console.log("Using fallback response in test environment");
+      const fallbackResponse = findBestFallbackResponse(message);
+      if (fallbackResponse) {
+        return fallbackResponse;
+      }
+    }
+
+    // In development, try API first, then fallback
+    if (isDevelopment) {
+      if (process.env.OPENAI_API_KEY) {
+        console.log("Making development API call");
+        try {
+          const response = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [
+              { role: "system", content: SYSTEM_PROMPT },
+              { role: "user", content: message }
+            ],
+            temperature: 0.7,
+            max_tokens: 500,
+          });
+          return response.choices[0].message.content || "I'm sorry, I couldn't generate a response.";
+        } catch (error) {
+          console.error("API call failed in development, falling back to static responses");
+        }
+      }
+      // If API fails or no API key, use fallback
+      const fallbackResponse = findBestFallbackResponse(message);
+      if (fallbackResponse) {
+        return fallbackResponse;
+      }
+    }
+
+    // Return a generic response if all else fails
     return "I can help with questions about down payments, mortgage rates, property taxes, home insurance, and closing costs. Please try asking about one of these topics.";
+  } catch (error: any) {
+    console.error("Error in handleChatMessage:", error);
+    throw error; // Re-throw the error to be handled by the API route
   }
 }
