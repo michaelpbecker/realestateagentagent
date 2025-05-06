@@ -9,6 +9,8 @@ describe('ChatInterface', () => {
   beforeEach(() => {
     // Reset mocks before each test
     vi.clearAllMocks();
+    // Reset fetch mock implementation
+    (global.fetch as any).mockReset();
   });
 
   it('renders chat interface correctly', () => {
@@ -54,6 +56,7 @@ describe('ChatInterface', () => {
   });
 
   it('displays error toast on API failure', async () => {
+    // Mock fetch to reject with an error
     (global.fetch as any).mockRejectedValueOnce(new Error('Failed to fetch'));
 
     render(
@@ -75,6 +78,7 @@ describe('ChatInterface', () => {
   });
 
   it('handles server error response', async () => {
+    // Mock fetch to return a non-ok response
     (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       json: () => Promise.resolve({ error: 'Server error' })
