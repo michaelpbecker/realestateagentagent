@@ -11,18 +11,42 @@ export const fallbackResponses = new Map<string, string>([
   ['mortgage rates', 'Mortgage rates vary based on factors like credit score, down payment, and loan term. As of March 2025, 30-year fixed rates average around 6-7%. Contact a lender for personalized rates.'],
   ['property taxes', 'Property taxes vary by location but typically range from 0.5% to 2.5% of the home\'s assessed value annually. Check with your local tax assessor\'s office for specific rates in your area.'],
   ['home insurance', 'Home insurance costs typically range from $1,000 to $3,000 annually, depending on factors like location, coverage amount, and deductible. Shop around with different insurers for the best rates.'],
-  ['closing costs', 'Closing costs usually range from 2% to 5% of the loan amount. This includes fees for appraisal, title search, title insurance, loan origination, and other services.']
+  ['closing costs', 'Closing costs usually range from 2% to 5% of the loan amount. This includes fees for appraisal, title search, title insurance, loan origination, and other services.'],
+  ['renovation costs', 'Common renovation costs (2025 averages):\n- Kitchen remodel: $25,000-$50,000\n- Bathroom remodel: $10,000-$25,000\n- Roof replacement: $8,000-$15,000\n- HVAC system: $5,000-$10,000\n- Flooring: $3-$10 per sq ft\n- Painting: $2-$6 per sq ft\n- Windows: $300-$1,000 per window'],
+  ['market analysis', 'To determine if a market is a buyer\'s or seller\'s market, look at:\n1. Days on market (DOM)\n2. Price trends (rising/falling)\n3. Inventory levels\n4. Sale-to-list price ratio\n5. Number of competing offers\n\nA buyer\'s market typically has:\n- High inventory\n- Long DOM\n- Falling prices\n- Sale price below list\n\nA seller\'s market shows:\n- Low inventory\n- Short DOM\n- Rising prices\n- Multiple offers above list'],
+  ['zillow analysis', 'When analyzing a Zillow listing, I can help you understand:\n1. Price comparison to similar homes\n2. Property history and price changes\n3. Neighborhood data and trends\n4. School ratings and proximity\n5. Property features and potential issues\n\nPlease share the Zillow link, and I\'ll provide a detailed analysis.']
 ]);
 
-const SYSTEM_PROMPT = `You are a helpful assistant specialized in home buying and mortgages. Help users understand:
-- Monthly payment calculations
-- Down payment requirements
-- Property taxes and insurance
-- HOA fees and their impact
-- Renovation budgeting
-- General home buying advice
+const SYSTEM_PROMPT = `You are a helpful real estate agent assistant. You can help with:
 
-Keep responses concise and focused on the user's question.`;
+1. Property Analysis:
+   - Analyzing Zillow listings
+   - Understanding market conditions (buyer's vs seller's market)
+   - Property value trends
+   - Neighborhood insights
+
+2. Financial Planning:
+   - Monthly payment calculations
+   - Down payment requirements
+   - Property taxes and insurance
+   - HOA fees and their impact
+   - Renovation budgeting
+   - Closing costs
+
+3. Home Improvement:
+   - Average costs for common renovations
+   - ROI for different improvements
+   - Contractor recommendations
+   - Permitting requirements
+
+4. Market Analysis:
+   - Current market conditions
+   - Price trends
+   - Inventory levels
+   - Days on market
+   - Price per square foot
+
+Keep responses concise and focused on the user's question. When analyzing a Zillow link, extract key details and provide insights about the property and its market.`;
 
 // Helper function to find the best matching fallback response
 function findBestFallbackResponse(message: string): string | null {
