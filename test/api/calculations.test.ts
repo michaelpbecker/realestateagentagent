@@ -3,6 +3,19 @@ import request from 'supertest';
 import express, { Express } from 'express';
 import { calculationsRouter } from '../../server/api/calculations';
 
+// Mock the shared module
+vi.mock('@app/shared/calculations', () => ({
+  calculateMonthlyPayment: vi.fn().mockImplementation((homePrice, downPayment, interestRate, loanTerm) => {
+    const principal = homePrice - downPayment;
+    const monthlyRate = interestRate / 100 / 12;
+    const numberOfPayments = loanTerm * 12;
+    return principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+  }),
+  calculateDownPayment: vi.fn().mockImplementation((homePrice, percentage) => {
+    return homePrice * (percentage / 100);
+  })
+}));
+
 // Mock the OpenAI module
 vi.mock('../../server/openai', () => ({
   handleChatMessage: vi.fn().mockImplementation(async (message: string) => {
