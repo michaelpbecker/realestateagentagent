@@ -20,6 +20,8 @@ beforeAll(() => {
       removeListener: function() {}
     };
   };
+  // Set up environment variables for testing
+  process.env.OPENAI_API_KEY = 'test-api-key';
 });
 
 // runs a cleanup after each test case (e.g. clearing jsdom)

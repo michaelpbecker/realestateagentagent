@@ -1,22 +1,17 @@
 import OpenAI from "openai";
 
-// Initialize OpenAI only if API key is available
-let openai: OpenAI | null = null;
-try {
-  if (process.env.OPENAI_API_KEY) {
-    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  }
-} catch (error) {
-  console.log("OpenAI initialization failed, using fallback responses only");
-}
+export const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY || 'test-api-key',
+  dangerouslyAllowBrowser: process.env.NODE_ENV === 'test',
+});
 
 // Fallback responses for testing and development
-const fallbackResponses = new Map<string, string>([
+export const fallbackResponses = new Map<string, string>([
   ['down payment', 'A typical down payment is 20% of the home\'s purchase price, though you can find options for as low as 3.5% with FHA loans. Keep in mind that a smaller down payment usually means paying for private mortgage insurance (PMI).'],
   ['mortgage rates', 'Mortgage rates vary based on factors like credit score, down payment, and loan term. As of March 2025, 30-year fixed rates average around 6-7%. Contact a lender for personalized rates.'],
   ['property taxes', 'Property taxes vary by location but typically range from 0.5% to 2.5% of the home\'s assessed value annually. Check with your local tax assessor\'s office for specific rates in your area.'],
   ['home insurance', 'Home insurance costs typically range from $1,000 to $3,000 annually, depending on factors like location, coverage amount, and deductible. Shop around with different insurers for the best rates.'],
-  ['closing costs', 'Closing costs usually range from 2% to 5% of the loan amount. This includes fees for appraisal, title search, title insurance, loan origination, and other services.'],
+  ['closing costs', 'Closing costs usually range from 2% to 5% of the loan amount. This includes fees for appraisal, title search, title insurance, loan origination, and other services.']
 ]);
 
 const SYSTEM_PROMPT = `You are a helpful assistant specialized in home buying and mortgages. Help users understand:

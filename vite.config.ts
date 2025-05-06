@@ -22,6 +22,14 @@ export default defineConfig({
         ]
       : []),
   ],
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "client", "src"),
@@ -32,5 +40,19 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
+    assetsDir: "assets",
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, "client/index.html"),
+      },
+      output: {
+        assetFileNames: "assets/[name]-[hash][extname]",
+        chunkFileNames: "assets/[name]-[hash].js",
+        entryFileNames: "assets/[name]-[hash].js",
+      },
+    },
+    copyPublicDir: true,
+    manifest: true,
   },
+  publicDir: path.resolve(__dirname, "client/public"),
 });

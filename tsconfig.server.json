@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ES2020",
+    "outDir": "./server/dist",
+    "rootDir": ".",
+    "noEmit": false,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./client/src/*"],
+      "@shared/*": ["./shared/dist/*"]
+    }
+  },
+  "include": ["server/**/*", "shared/**/*", "vite.config.ts"],
+  "exclude": ["node_modules", "client"]
+} 
