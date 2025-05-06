@@ -2,14 +2,13 @@ export interface Property {
   id: string;
   address: string;
   price: number;
-  imageUrl: string;
-  zpid: string;
-  beds: number;
-  baths: number;
-  sqft: number;
-  lotSize: number;
+  bedrooms: number;
+  bathrooms: number;
+  squareFeet: number;
   yearBuilt: number;
-  zestimate: number;
+  description: string;
+  imageUrl: string;
+  createdAt: Date;
 }
 
 export interface SearchResponse {

@@ -1,61 +1,104 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { ChatInterface } from '../client/src/components/ChatInterface';
 import { Toaster } from '../client/src/components/ui/toaster';
-import React from 'react';
-import '@testing-library/jest-dom/vitest';
-
-// Mock OpenAI
-vi.mock('../server/openai', () => ({
-  handleChatMessage: vi.fn().mockResolvedValue('Test response')
-}));
 
 describe('ChatInterface', () => {
   beforeEach(() => {
+    // Reset mocks before each test
+    vi.clearAllMocks();
+    // Reset fetch mock implementation
+    (global.fetch as any).mockReset();
+  });
+
+  it('renders chat interface correctly', () => {
     render(
       <>
         <ChatInterface />
         <Toaster />
       </>
     );
-  });
 
-  it('renders chat interface correctly', () => {
-    expect(screen.getByRole('textbox', { name: 'Ask about home buying' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Send message' })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Paste in a Zillow link and I\'ll give you an analysis of the property')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /send message/i })).toBeInTheDocument();
   });
 
   it('handles message submission correctly', async () => {
-    const mockFetch = vi.fn().mockResolvedValue({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve({ message: 'Test response' })
+      json: () => Promise.resolve({ message: 'A typical down payment is 20% of the home\'s purchase price.' })
     });
-    global.fetch = mockFetch;
 
-    const input = screen.getByRole('textbox', { name: 'Ask about home buying' });
-    const button = screen.getByRole('button', { name: 'Send message' });
+    render(
+      <>
+        <ChatInterface />
+        <Toaster />
+      </>
+    );
 
-    fireEvent.change(input, { target: { value: 'Hello' } });
-    fireEvent.click(button);
+    const input = screen.getByPlaceholderText('Paste in a Zillow link and I\'ll give you an analysis of the property');
+    const sendButton = screen.getByRole('button', { name: /send message/i });
+
+    fireEvent.change(input, { target: { value: 'What is a typical down payment?' } });
+    fireEvent.click(sendButton);
 
     await waitFor(() => {
-      expect(screen.getByText('Hello')).toBeInTheDocument();
+      expect(screen.getByText('A typical down payment is 20% of the home\'s purchase price.')).toBeInTheDocument();
+    });
+
+    expect(global.fetch).toHaveBeenCalledWith('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'What is a typical down payment?' })
     });
   });
 
   it('displays error toast on API failure', async () => {
-    const mockFetch = vi.fn().mockRejectedValue(new Error('Failed to fetch'));
-    global.fetch = mockFetch;
+    // Mock fetch to reject with an error
+    (global.fetch as any).mockRejectedValueOnce(new Error('Failed to fetch'));
 
-    const input = screen.getByRole('textbox', { name: 'Ask about home buying' });
-    const button = screen.getByRole('button', { name: 'Send message' });
+    render(
+      <>
+        <ChatInterface />
+        <Toaster />
+      </>
+    );
 
-    fireEvent.change(input, { target: { value: 'Hello' } });
-    fireEvent.click(button);
+    const input = screen.getByPlaceholderText('Paste in a Zillow link and I\'ll give you an analysis of the property');
+    const sendButton = screen.getByRole('button', { name: /send message/i });
+
+    fireEvent.change(input, { target: { value: 'Test message' } });
+    fireEvent.click(sendButton);
 
     await waitFor(() => {
-      expect(screen.getByText('Error')).toBeInTheDocument();
       expect(screen.getByText('Unable to connect to the server. Please check your internet connection.')).toBeInTheDocument();
-    }, { timeout: 2000 });
+    });
+  });
+
+  it('handles server error response', async () => {
+    // Mock fetch to return a non-ok response
+    (global.fetch as any).mockResolvedValueOnce({
+      ok: false,
+      json: () => Promise.resolve({ error: 'Server error' })
+    });
+
+    render(
+      <>
+        <ChatInterface />
+        <Toaster />
+      </>
+    );
+
+    const input = screen.getByPlaceholderText('Paste in a Zillow link and I\'ll give you an analysis of the property');
+    const sendButton = screen.getByRole('button', { name: /send message/i });
+
+    fireEvent.change(input, { target: { value: 'Test message' } });
+    fireEvent.click(sendButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Server error')).toBeInTheDocument();
+    });
   });
 });

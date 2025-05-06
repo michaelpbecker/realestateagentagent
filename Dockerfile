@@ -5,6 +5,7 @@ WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
+COPY tsconfig*.json ./
 
 # Install dependencies
 RUN npm ci
@@ -20,8 +21,9 @@ FROM node:20-slim
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files and TypeScript config
 COPY package*.json ./
+COPY tsconfig*.json ./
 
 # Install production dependencies
 RUN npm ci --production
@@ -38,6 +40,10 @@ RUN mkdir -p /app/dist/public/assets && \
     cp -r /app/shared/dist/* /app/server/dist/shared/ && \
     cp -r /app/dist/public/* /app/server/dist/public/
 
+# Create symlink for @app/shared
+RUN mkdir -p /app/node_modules/@app && \
+    ln -s /app/shared/dist /app/node_modules/@app/shared
+
 # Expose port
 EXPOSE 8080
 
@@ -46,4 +52,4 @@ ENV NODE_ENV=production
 ENV PORT=8080
 
 # Start the server
-CMD ["node", "server/dist/server/index.js"] 
+CMD ["node", "--experimental-specifier-resolution=node", "server/dist/server/index.js"] 

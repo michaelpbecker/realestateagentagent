@@ -1,33 +1,28 @@
-import type { InsertCalculation, Calculation } from "@shared/schema";
+import type { InsertCalculation, Calculation } from "@app/shared/schema";
 
 export interface IStorage {
   saveCalculation(calculation: InsertCalculation): Promise<Calculation>;
   getCalculations(): Promise<Calculation[]>;
 }
 
-export class MemStorage implements IStorage {
-  private calculations: Map<number, Calculation>;
-  private currentId: number;
+class MemoryStorage implements IStorage {
+  private calculations: Calculation[] = [];
+  private nextId = 1;
 
-  constructor() {
-    this.calculations = new Map();
-    this.currentId = 1;
-  }
-
-  async saveCalculation(insertCalculation: InsertCalculation): Promise<Calculation> {
-    const id = this.currentId++;
-    const calculation: Calculation = {
-      ...insertCalculation,
-      id,
-      createdAt: new Date(),
+  async saveCalculation(calculation: InsertCalculation): Promise<Calculation> {
+    const newCalculation: Calculation = {
+      ...calculation,
+      id: this.nextId.toString(),
+      createdAt: new Date()
     };
-    this.calculations.set(id, calculation);
-    return calculation;
+    this.calculations.push(newCalculation);
+    this.nextId++;
+    return newCalculation;
   }
 
   async getCalculations(): Promise<Calculation[]> {
-    return Array.from(this.calculations.values());
+    return this.calculations;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new MemoryStorage();

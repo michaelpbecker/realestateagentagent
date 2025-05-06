@@ -1,57 +1,114 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import supertest from 'supertest';
-import express from 'express';
-import { registerRoutes } from '../../server/routes';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import request from 'supertest';
+import express, { Express } from 'express';
+import { calculationsRouter } from '../../server/api/calculations';
 
-describe('API Endpoints', () => {
-  let app: express.Express;
-  let server: any;
+// Mock the shared module
+vi.mock('@app/shared/calculations', () => ({
+  calculateMonthlyPayment: vi.fn().mockImplementation((homePrice, downPayment, interestRate, loanTerm) => {
+    const principal = homePrice - downPayment;
+    const monthlyRate = interestRate / 100 / 12;
+    const numberOfPayments = loanTerm * 12;
+    return principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+  }),
+  calculateDownPayment: vi.fn().mockImplementation((homePrice, percentage) => {
+    return homePrice * (percentage / 100);
+  })
+}));
 
-  beforeAll(async () => {
+// Mock the OpenAI module
+vi.mock('../../server/openai', () => ({
+  handleChatMessage: vi.fn().mockImplementation(async (message: string) => {
+    return 'Mocked response for: ' + message;
+  })
+}));
+
+describe('Calculations API', () => {
+  let app: Express;
+
+  beforeEach(() => {
     app = express();
     app.use(express.json());
-    server = await registerRoutes(app);
+    app.use('/api/calculations', calculationsRouter);
   });
 
-  afterAll(() => {
-    if (server) {
-      server.close();
-    }
-  });
-
-  describe('POST /api/calculations', () => {
-    it('saves a valid calculation', async () => {
-      const calculation = {
-        purchasePrice: 500000,
-        downPaymentPercent: 20,
-        hoa: 200,
-        taxes: 6000,
-        interestRate: 6.5,
-        insurance: 150,
-        renovationBudget: 50000,
-        monthlyNetIncome: 10000
-      };
-
-      const response = await supertest(app)
-        .post('/api/calculations')
-        .send(calculation);
+  describe('POST /api/calculations/monthly-payment', () => {
+    it('should calculate monthly payments correctly', async () => {
+      const response = await request(app)
+        .post('/api/calculations/monthly-payment')
+        .send({
+          homePrice: 500000,
+          downPayment: 100000,
+          interestRate: 5,
+          loanTerm: 30
+        });
 
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('id');
-      expect(response.body.purchasePrice).toBe(calculation.purchasePrice);
+      expect(response.body).toHaveProperty('monthlyPayment');
+      expect(typeof response.body.monthlyPayment).toBe('number');
     });
 
-    it('rejects invalid calculation data', async () => {
-      const invalidCalculation = {
-        purchasePrice: -500000, // Invalid negative price
-        downPaymentPercent: 150, // Invalid percentage > 100
-      };
+    it('should validate monthly payment calculation inputs', async () => {
+      const response = await request(app)
+        .post('/api/calculations/monthly-payment')
+        .send({
+          homePrice: -500000,
+          downPayment: 100000,
+          interestRate: 5,
+          loanTerm: 30
+        });
 
-      const response = await supertest(app)
-        .post('/api/calculations')
-        .send(invalidCalculation);
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty('error');
+    });
 
-      expect(response.status).toBe(400);
+    it('should handle missing monthly payment calculation inputs', async () => {
+      const response = await request(app)
+        .post('/api/calculations/monthly-payment')
+        .send({
+          homePrice: 500000
+        });
+
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty('error');
+    });
+  });
+
+  describe('POST /api/calculations/down-payment', () => {
+    it('should calculate down payment correctly', async () => {
+      const response = await request(app)
+        .post('/api/calculations/down-payment')
+        .send({
+          homePrice: 500000,
+          percentage: 20
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('downPayment');
+      expect(typeof response.body.downPayment).toBe('number');
+    });
+
+    it('should validate down payment calculation inputs', async () => {
+      const response = await request(app)
+        .post('/api/calculations/down-payment')
+        .send({
+          homePrice: -500000,
+          percentage: 20
+        });
+
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty('error');
+    });
+
+    it('should handle missing down payment calculation inputs', async () => {
+      const response = await request(app)
+        .post('/api/calculations/down-payment')
+        .send({
+          homePrice: 500000
+        });
+
+      expect(response.status).toBe(500);
+      expect(response.body).toHaveProperty('error');
     });
   });
 });

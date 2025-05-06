@@ -2,8 +2,9 @@ import type { Express } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
 import { handleChatMessage } from "./openai";
-import { calculationFormSchema } from "@shared/schema";
+import { calculationFormSchema } from "@app/shared/schema";
 import { searchProperties } from "./zillow";
+import { calculateMonthlyPayment } from "@app/shared/calculations";
 
 export async function registerRoutes(app: Express) {
   app.get("/api/properties/search", async (req, res) => {
@@ -24,7 +25,16 @@ export async function registerRoutes(app: Express) {
   app.post("/api/calculations", async (req, res) => {
     try {
       const data = calculationFormSchema.parse(req.body);
-      const calculation = await storage.saveCalculation(data);
+      const monthlyPayment = calculateMonthlyPayment(
+        data.homePrice,
+        data.downPayment,
+        data.interestRate,
+        data.loanTerm
+      );
+      const calculation = await storage.saveCalculation({
+        ...data,
+        monthlyPayment
+      });
       res.json(calculation);
     } catch (error: any) {
       res.status(400).json({ error: error.message });

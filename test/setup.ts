@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { expect, afterEach, beforeAll } from 'vitest';
+import { expect, afterEach, beforeAll, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 
 // Mock ResizeObserver
@@ -8,6 +8,10 @@ class ResizeObserverMock {
   unobserve() {}
   disconnect() {}
 }
+
+// Mock fetch
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
 
 beforeAll(() => {
   // Add ResizeObserver mock
@@ -20,11 +24,12 @@ beforeAll(() => {
       removeListener: function() {}
     };
   };
-  // Set up environment variables for testing
-  process.env.OPENAI_API_KEY = 'test-api-key';
+  // Use the environment variable if available, otherwise use a default test key
+  process.env.OPENAI_API_KEY = process.env.OPENAI_API_KEY || 'test-api-key';
 });
 
 // runs a cleanup after each test case (e.g. clearing jsdom)
 afterEach(() => {
   cleanup();
+  vi.clearAllMocks();
 });

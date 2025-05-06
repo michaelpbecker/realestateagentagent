@@ -19,6 +19,13 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './client/src'),
       '@shared': path.resolve(__dirname, './shared'),
+      '@app/shared': path.resolve(__dirname, './shared'),
     },
+    deps: {
+      inline: [/openai/],
+    },
+    environmentMatchGlobs: [
+      ['server/**/*', 'node']
+    ]
   },
 });

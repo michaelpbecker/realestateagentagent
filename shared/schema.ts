@@ -1,19 +1,22 @@
 import { z } from "zod";
 
 export const calculationFormSchema = z.object({
-  purchasePrice: z.number().min(100000).max(10000000),
-  downPaymentPercent: z.number().min(0).max(100),
-  hoa: z.number().min(0),
-  taxes: z.number().min(0),
+  homePrice: z.number().min(0),
+  downPayment: z.number().min(0),
   interestRate: z.number().min(0).max(100),
-  insurance: z.number().min(0),
-  renovationBudget: z.number().min(0),
-  monthlyNetIncome: z.number().min(0),
+  loanTerm: z.number().min(1).max(50)
 });
 
-export type InsertCalculation = z.infer<typeof calculationFormSchema>;
+export type CalculationForm = z.infer<typeof calculationFormSchema>;
 
-export type Calculation = InsertCalculation & {
-  id: number;
+export interface Calculation {
+  id: string;
+  homePrice: number;
+  downPayment: number;
+  interestRate: number;
+  loanTerm: number;
+  monthlyPayment: number;
   createdAt: Date;
-};
+}
+
+export type InsertCalculation = Omit<Calculation, 'id' | 'createdAt'>;
