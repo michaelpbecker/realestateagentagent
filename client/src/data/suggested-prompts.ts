@@ -1,46 +1,76 @@
 import { Home, Calculator, Wrench, TrendingUp } from "lucide-react";
 
-export interface SuggestedPrompt {
-  category: string;
-  icon: typeof Home;
-  prompts: string[];
-}
-
-export const SUGGESTED_PROMPTS: SuggestedPrompt[] = [
+export const SUGGESTED_PROMPTS = [
   {
     category: "Property Analysis",
     icon: Home,
     prompts: [
-      "Analyze this Zillow listing: [paste link]",
-      "Is this a good investment property?",
-      "What's the market like in this area?"
+      {
+        title: "Analyze Listing",
+        description: "Analyze this Zillow listing: [paste link]"
+      },
+      {
+        title: "Investment Check",
+        description: "Is this a good investment property?"
+      },
+      {
+        title: "Area Market",
+        description: "What's the market like in this area?"
+      }
     ]
   },
   {
     category: "Financial Planning",
     icon: Calculator,
     prompts: [
-      "What's a good down payment for a $500k home?",
-      "How much should I budget for closing costs?",
-      "What's the difference between FHA and conventional loans?"
+      {
+        title: "Down Payment",
+        description: "What's a good down payment for a $500k home?"
+      },
+      {
+        title: "Closing Costs",
+        description: "How much should I budget for closing costs?"
+      },
+      {
+        title: "Loan Types",
+        description: "What's the difference between FHA and conventional loans?"
+      }
     ]
   },
   {
     category: "Home Improvement",
     icon: Wrench,
     prompts: [
-      "What's the average cost of a kitchen remodel?",
-      "How much value does a bathroom renovation add?",
-      "What renovations have the best ROI?"
+      {
+        title: "Kitchen Cost",
+        description: "What's the average cost of a kitchen remodel?"
+      },
+      {
+        title: "Bathroom Value",
+        description: "How much value does a bathroom renovation add?"
+      },
+      {
+        title: "Best ROI",
+        description: "What renovations have the best ROI?"
+      }
     ]
   },
   {
     category: "Market Analysis",
     icon: TrendingUp,
     prompts: [
-      "Is this a buyer's or seller's market?",
-      "What are the current market trends?",
-      "How do I know if a property is overpriced?"
+      {
+        title: "Market Type",
+        description: "Is this a buyer's or seller's market?"
+      },
+      {
+        title: "Market Trends",
+        description: "What are the current market trends?"
+      },
+      {
+        title: "Price Check",
+        description: "How do I know if a property is overpriced?"
+      }
     ]
   }
 ]; 

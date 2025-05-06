@@ -1,54 +1,16 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { SendHorizontal, Home, Calculator, Wrench, TrendingUp } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Textarea } from "./ui/textarea";
+import { ScrollArea } from "./ui/scroll-area";
+import { SendHorizontal } from "lucide-react";
+import { useToast } from "../hooks/use-toast";
+import { SuggestedPrompts } from "./SuggestedPrompts";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
-
-const SUGGESTED_PROMPTS = [
-  {
-    category: "Property Analysis",
-    icon: Home,
-    prompts: [
-      "Analyze this Zillow listing: [paste link]",
-      "Is this a good investment property?",
-      "What's the market like in this area?"
-    ]
-  },
-  {
-    category: "Financial Planning",
-    icon: Calculator,
-    prompts: [
-      "What's a good down payment for a $500k home?",
-      "How much should I budget for closing costs?",
-      "What's the difference between FHA and conventional loans?"
-    ]
-  },
-  {
-    category: "Home Improvement",
-    icon: Wrench,
-    prompts: [
-      "What's the average cost of a kitchen remodel?",
-      "How much value does a bathroom renovation add?",
-      "What renovations have the best ROI?"
-    ]
-  },
-  {
-    category: "Market Analysis",
-    icon: TrendingUp,
-    prompts: [
-      "Is this a buyer's or seller's market?",
-      "What are the current market trends?",
-      "How do I know if a property is overpriced?"
-    ]
-  }
-];
 
 export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -121,40 +83,18 @@ export function ChatInterface() {
         </ScrollArea>
 
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-2">
-            {SUGGESTED_PROMPTS.map((category) => (
-              <div key={category.category} className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  <category.icon className="h-4 w-4" />
-                  {category.category}
-                </div>
-                <div className="space-y-1">
-                  {category.prompts.map((prompt) => (
-                    <Button
-                      key={prompt}
-                      variant="outline"
-                      size="sm"
-                      className="w-full justify-start text-left h-auto py-2 px-3 text-xs"
-                      onClick={() => sendMessage(prompt)}
-                    >
-                      {prompt}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+          <SuggestedPrompts onSelectPrompt={sendMessage} />
 
           <div className="flex gap-2">
             <Textarea
               value={input}
-              onChange={e => setInput(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
               placeholder="Ask about home buying..."
               aria-label="Ask about home buying"
               role="textbox"
               name="ask about home buying"
               className="resize-none text-sm md:text-base"
-              onKeyDown={e => {
+              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   sendMessage();
