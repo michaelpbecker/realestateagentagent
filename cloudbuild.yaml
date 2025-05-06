@@ -22,7 +22,7 @@ steps:
       - 'managed'
       - '--allow-unauthenticated'
       - '--set-env-vars'
-      - 'NODE_ENV=production,OPENAI_API_KEY=test-api-key'
+      - 'NODE_ENV=production,OPENAI_API_KEY=${_OPENAI_API_KEY}'
       - '--port'
       - '8080'
       - '--memory'

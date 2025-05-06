@@ -1,9 +1,7 @@
 import OpenAI from "openai";
 
-export const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || 'test-api-key',
-  dangerouslyAllowBrowser: process.env.NODE_ENV === 'test',
-});
+// Log the API key status (but not the actual key)
+console.log("API Key Status:", process.env.OPENAI_API_KEY ? "Present" : "Missing");
 
 // Fallback responses for testing and development
 export const fallbackResponses = new Map<string, string>([
@@ -17,6 +15,24 @@ export const fallbackResponses = new Map<string, string>([
   ['zillow analysis', 'When analyzing a Zillow listing, I can help you understand:\n1. Price comparison to similar homes\n2. Property history and price changes\n3. Neighborhood data and trends\n4. School ratings and proximity\n5. Property features and potential issues\n\nPlease share the Zillow link, and I\'ll provide a detailed analysis.']
 ]);
 
+// Helper function to find the best matching fallback response
+function findBestFallbackResponse(message: string): string | null {
+  const normalizedMessage = message.toLowerCase();
+  for (const [key, value] of fallbackResponses) {
+    if (normalizedMessage.includes(key)) {
+      return value;
+    }
+  }
+  return null;
+}
+
+// Create OpenAI client
+export const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  dangerouslyAllowBrowser: process.env.NODE_ENV === 'test',
+});
+
+// Keep the system prompt for context
 const SYSTEM_PROMPT = `You are a helpful real estate agent assistant. You can help with:
 
 1. Property Analysis:
@@ -48,43 +64,20 @@ const SYSTEM_PROMPT = `You are a helpful real estate agent assistant. You can he
 
 Keep responses concise and focused on the user's question. When analyzing a Zillow link, extract key details and provide insights about the property and its market.`;
 
-// Helper function to find the best matching fallback response
-function findBestFallbackResponse(message: string): string | null {
-  const normalizedMessage = message.toLowerCase();
-  for (const [key, value] of fallbackResponses) {
-    if (normalizedMessage.includes(key)) {
-      return value;
-    }
-  }
-  return null;
-}
-
 export async function handleChatMessage(message: string): Promise<string> {
   try {
-    // First try using OpenAI API if available
-    if (openai) {
-      console.log("Attempting OpenAI API call");
-      const response = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: message }
-        ],
-        temperature: 0.7,
-        max_tokens: 500,
-      });
-      return response.choices[0].message.content || "I'm sorry, I couldn't generate a response.";
-    }
-
-    // If OpenAI is not available, try fallback response
-    const fallbackResponse = findBestFallbackResponse(message);
-    if (fallbackResponse) {
-      console.log("Using fallback response");
-      return fallbackResponse;
-    }
-
-    // Return a generic response if fallback fails
-    return "I can help with questions about down payments, mortgage rates, property taxes, home insurance, and closing costs. Please try asking about one of these topics.";
+    // Try using the API
+    console.log("Attempting OpenAI API call with message:", message);
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: message }
+      ],
+      temperature: 0.7,
+      max_tokens: 500,
+    });
+    return response.choices[0].message.content || "I'm sorry, I couldn't generate a response.";
   } catch (error: any) {
     console.error("Error in handleChatMessage:", error);
 

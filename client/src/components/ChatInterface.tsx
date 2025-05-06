@@ -63,6 +63,9 @@ export function ChatInterface() {
     <Card className="h-[calc(100vh-8rem)] lg:sticky lg:top-8">
       <CardHeader>
         <CardTitle>Ask Questions</CardTitle>
+        <p className="text-sm text-muted-foreground mt-1">
+          Paste in a Zillow link and I'll give you an analysis of the property
+        </p>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col h-[calc(100%-5rem)]">
         <ScrollArea className="flex-1 pr-4 mb-4">
@@ -89,7 +92,7 @@ export function ChatInterface() {
             <Textarea
               value={input}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
-              placeholder="Ask about home buying..."
+              placeholder="Paste in a Zillow link and I'll give you an analysis of the property"
               aria-label="Ask about home buying"
               role="textbox"
               name="ask about home buying"

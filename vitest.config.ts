@@ -20,5 +20,11 @@ export default defineConfig({
       '@': path.resolve(__dirname, './client/src'),
       '@shared': path.resolve(__dirname, './shared'),
     },
+    deps: {
+      inline: [/openai/],
+    },
+    environmentMatchGlobs: [
+      ['server/**/*', 'node']
+    ]
   },
 });

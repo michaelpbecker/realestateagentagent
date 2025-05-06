@@ -10,9 +10,11 @@
     "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": true,
-    "noEmit": true,
     "isolatedModules": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "#shared/*": ["./shared/dist/*"]
+    }
   },
   "include": ["client", "shared"],
   "exclude": ["node_modules", "server"]

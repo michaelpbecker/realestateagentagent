@@ -3,14 +3,24 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "shared"
+  ],
+  "imports": {
+    "#shared/*": "./shared/dist/*"
+  },
   "scripts": {
-    "dev": "vite",
-    "build": "rm -rf dist server/dist && mkdir -p dist/public && npm run build:shared && npm run build:client && npm run build:server && mkdir -p server/dist/shared && cp -r shared/dist/* server/dist/shared/",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "nodemon --watch server --ext ts,js --exec \"tsx server/index.ts\"",
+    "dev:client": "vite",
+    "build": "rm -rf dist server/dist && mkdir -p dist/public && npm run build:shared && npm run build:client && npm run build:server",
     "build:shared": "tsc -p tsconfig.shared.json",
     "build:client": "vite build",
     "build:server": "tsc -p tsconfig.server.json",
-    "start": "node server/dist/index.js",
-    "test": "vitest",
+    "start": "npm run start:server",
+    "start:server": "NODE_OPTIONS=\"--experimental-specifier-resolution=node --es-module-specifier-resolution=node\" node server/dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "preview": "vite preview"
   },
@@ -89,8 +99,10 @@
     "@vitejs/plugin-react": "^4.2.1",
     "@vitest/coverage-v8": "^1.1.0",
     "autoprefixer": "^10.4.16",
+    "concurrently": "^9.1.2",
     "esbuild": "^0.19.8",
     "jsdom": "^23.0.1",
+    "nodemon": "^3.1.10",
     "postcss": "^8.4.32",
     "supertest": "^7.1.0",
     "tailwindcss": "^3.3.6",

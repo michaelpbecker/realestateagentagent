@@ -7,7 +7,7 @@ export const SUGGESTED_PROMPTS = [
     prompts: [
       {
         title: "Analyze Listing",
-        description: "Analyze this Zillow listing: [paste link]"
+        description: "Analyze a listing from a Zillow link"
       },
       {
         title: "Investment Check",

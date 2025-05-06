@@ -1,61 +1,48 @@
 import puppeteer from 'puppeteer';
-import { Property } from '@shared/types';
+import { Property } from '@app/shared/types';
 
 export async function searchProperties(location: string): Promise<Property[]> {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
-
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+  
   try {
-    const page = await browser.newPage();
-    await page.setViewport({ width: 1280, height: 800 });
-
-    // Format the search URL
-    const searchUrl = `https://www.zillow.com/homes/${encodeURIComponent(location)}_rb/`;
-    console.log('Searching Zillow URL:', searchUrl);
-
-    await page.goto(searchUrl, { waitUntil: 'networkidle0', timeout: 30000 });
-    console.log('Page loaded successfully');
-
-    // Wait for the property cards to load
-    await page.waitForSelector('[data-test="property-card"]', { timeout: 10000 });
-    console.log('Found property cards');
-
-    // Extract property information
+    await page.goto(`https://www.zillow.com/homes/${encodeURIComponent(location)}`);
+    await page.waitForSelector('[data-test="property-card"]', { timeout: 5000 });
+    
     const properties = await page.evaluate(() => {
       const cards = document.querySelectorAll('[data-test="property-card"]');
-      console.log('Number of cards found:', cards.length);
-
       return Array.from(cards).map((card) => {
-        const priceElement = card.querySelector('[data-test="property-card-price"]');
-        const addressElement = card.querySelector('[data-test="property-card-addr"]');
-        const imageElement = card.querySelector('img');
-
-        const price = priceElement ? 
-          parseInt(priceElement.textContent?.replace(/[^0-9]/g, '') || '0') : 0;
-
+        const priceEl = card.querySelector('[data-test="property-card-price"]');
+        const addressEl = card.querySelector('[data-test="property-card-addr"]');
+        const detailsEl = card.querySelector('[data-test="property-card-details"]');
+        const imgEl = card.querySelector('img');
+        
+        const price = priceEl ? parseInt(priceEl.textContent?.replace(/[^0-9]/g, '') || '0') : 0;
+        const address = addressEl?.textContent?.trim() || '';
+        const details = detailsEl?.textContent?.trim() || '';
+        const imageUrl = imgEl?.getAttribute('src') || '';
+        
+        // Parse details string for bedrooms, bathrooms, and square feet
+        const bedsMatch = details.match(/(\d+)\s*bed/i);
+        const bathsMatch = details.match(/(\d+(?:\.\d+)?)\s*bath/i);
+        const sqftMatch = details.match(/(\d+(?:,\d+)?)\s*sqft/i);
+        
         return {
-          id: card.getAttribute('id') || Math.random().toString(),
-          address: addressElement?.textContent?.trim() || '',
+          id: Math.random().toString(36).substring(2),
+          address,
           price,
-          imageUrl: imageElement?.getAttribute('src') || '',
-          zpid: card.getAttribute('data-zpid') || '',
-          beds: 0,
-          baths: 0,
-          sqft: 0,
-          lotSize: 0,
-          yearBuilt: 0,
-          zestimate: 0
+          bedrooms: bedsMatch ? parseInt(bedsMatch[1]) : 0,
+          bathrooms: bathsMatch ? parseFloat(bathsMatch[1]) : 0,
+          squareFeet: sqftMatch ? parseInt(sqftMatch[1].replace(',', '')) : 0,
+          yearBuilt: new Date().getFullYear(), // Default to current year since Zillow doesn't show this on cards
+          description: details,
+          imageUrl,
+          createdAt: new Date()
         };
       });
     });
-
-    console.log('Extracted properties:', properties.length);
+    
     return properties.filter(p => p.price > 0 && p.address);
-  } catch (error) {
-    console.error('Zillow scraping error:', error);
-    return [];
   } finally {
     await browser.close();
   }

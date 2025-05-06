@@ -68,26 +68,39 @@ export function formatPercentage(value: number): string {
   }).format(value / 100);
 }
 
-export function calculateMonthlyPayment(
-  homePrice: number,
-  downPayment: number,
-  interestRate: number,
-  loanTerm: number
-): number {
-  const principal = homePrice - downPayment;
-  const monthlyRate = interestRate / 12 / 100;
-  const numberOfPayments = loanTerm * 12;
-
-  const monthlyPayment =
-    (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
-    (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
-
-  return Math.round(monthlyPayment * 100) / 100;
+/**
+ * Calculates the monthly mortgage payment using the loan amount, interest rate, and loan term.
+ * @param {number} homePrice - The total home price in dollars
+ * @param {number} downPayment - The down payment amount in dollars
+ * @param {number} interestRate - The annual interest rate as a percentage (e.g., 5.5 for 5.5%)
+ * @param {number} loanTerm - The loan term in years
+ * @returns {number} The monthly payment amount
+ */
+export function calculateMonthlyPayment(homePrice: number, downPayment: number, interestRate: number, loanTerm: number): number {
+    const loanAmount = homePrice - downPayment;
+    // Convert annual interest rate to monthly rate (as a decimal)
+    const monthlyRate = (interestRate / 100) / 12;
+    
+    // Convert loan term from years to months
+    const numberOfPayments = loanTerm * 12;
+    
+    // Calculate monthly payment using the formula:
+    // P = L[c(1 + c)^n]/[(1 + c)^n - 1]
+    // where P = payment, L = loan amount, c = monthly interest rate, n = number of payments
+    const monthlyPayment = loanAmount * 
+        (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+        (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+    
+    return Math.round(monthlyPayment * 100) / 100; // Round to 2 decimal places
 }
 
-export function calculateDownPayment(
-  homePrice: number,
-  percentage: number
-): number {
-  return Math.round((homePrice * percentage) / 100);
+/**
+ * Calculates the down payment amount based on the home price and percentage.
+ * @param {number} homePrice - The total home price in dollars
+ * @param {number} percentage - The down payment percentage (e.g., 20 for 20%)
+ * @returns {number} The down payment amount
+ */
+export function calculateDownPayment(homePrice: number, percentage: number): number {
+    const downPayment = homePrice * (percentage / 100);
+    return Math.round(downPayment * 100) / 100; // Round to 2 decimal places
 }

@@ -146,18 +146,18 @@ export function Calculator({ initialPrice = 625000 }: { initialPrice?: number })
                     <FormLabel htmlFor="downPaymentPercent">Down Payment</FormLabel>
                     <FormControl>
                       <div className="space-y-2">
-                        <Slider
+                      <Slider
                           id="downPaymentPercent"
-                          min={0}
-                          max={100}
-                          step={5}
-                          value={[field.value]}
-                          onValueChange={([value]) => {
-                            field.onChange(value);
-                            form.handleSubmit(onSubmit)();
-                          }}
+                        min={0}
+                        max={100}
+                        step={5}
+                        value={[field.value]}
+                        onValueChange={([value]) => {
+                          field.onChange(value);
+                          form.handleSubmit(onSubmit)();
+                        }}
                           aria-label="Down Payment Percentage"
-                        />
+                      />
                         <div className="text-sm text-muted-foreground text-center">
                           {field.value}%
                         </div>

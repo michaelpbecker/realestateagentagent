@@ -58,7 +58,7 @@
     "normal": "1.5",
     "relaxed": "1.625",
     "loose": "2"
-  },
+    },
   "letterSpacing": {
     "tighter": "-0.05em",
     "tight": "-0.025em",
