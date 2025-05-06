@@ -4,14 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx server/index.ts",
-    "build": "rm -rf dist && mkdir -p dist/public && npm run build:shared && npm run build:client && npm run build:server",
+    "dev": "vite",
+    "build": "rm -rf dist server/dist && mkdir -p dist/public && npm run build:shared && npm run build:client && npm run build:server && mkdir -p server/dist/shared && cp -r shared/dist/* server/dist/shared/",
     "build:shared": "tsc -p tsconfig.shared.json",
-    "build:client": "vite build --outDir dist/public",
-    "build:server": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=server/dist",
+    "build:client": "vite build",
+    "build:server": "tsc -p tsconfig.server.json",
     "start": "node server/dist/index.js",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

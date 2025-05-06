@@ -1,5 +1,5 @@
 import express from 'express';
-import { calculateMonthlyPayment, calculateDownPayment } from '../../shared/calculations.js';
+import { calculateMonthlyPayment, calculateDownPayment } from '../../shared/dist/calculations.js';
 
 export const calculationsRouter = express.Router();
 

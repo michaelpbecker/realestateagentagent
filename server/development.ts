@@ -5,7 +5,6 @@ import { fileURLToPath } from "url";
 import { createServer as createViteServer, createLogger } from "vite";
 import type { Server } from 'http';
 import type { IncomingMessage, ServerResponse } from 'http';
-import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -46,7 +45,6 @@ export async function setupDevelopment(app: Express, server: Server) {
   };
 
   const vite = await createViteServer({
-    ...viteConfig,
     configFile: false,
     customLogger: {
       ...viteLogger,

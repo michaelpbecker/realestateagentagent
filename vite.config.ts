@@ -45,6 +45,14 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, "client/index.html"),
       },
+      output: {
+        assetFileNames: "assets/[name]-[hash][extname]",
+        chunkFileNames: "assets/[name]-[hash].js",
+        entryFileNames: "assets/[name]-[hash].js",
+      },
     },
+    copyPublicDir: true,
+    manifest: true,
   },
+  publicDir: path.resolve(__dirname, "client/public"),
 });

@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-slim as build
+FROM node:20-slim AS build
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci
 
-# Copy source code
+# Copy source files
 COPY . .
 
 # Build the application
@@ -23,7 +23,7 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install production dependencies only
+# Install production dependencies
 RUN npm ci --production
 
 # Copy built files from build stage
@@ -31,13 +31,19 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/server/dist ./server/dist
 COPY --from=build /app/shared/dist ./shared/dist
 
-# Set production environment
+# Create necessary directories and copy files
+RUN mkdir -p /app/dist/public/assets && \
+    mkdir -p /app/server/dist/shared && \
+    mkdir -p /app/server/dist/public && \
+    cp -r /app/shared/dist/* /app/server/dist/shared/ && \
+    cp -r /app/dist/public/* /app/server/dist/public/
+
+# Expose port
+EXPOSE 8080
+
+# Set environment variables
 ENV NODE_ENV=production
 ENV PORT=8080
 
-# Verify the build output
-RUN ls -la /app/dist/public && \
-    ls -la /app/server/dist
-
 # Start the server
-CMD ["node", "server/dist/index.js"] 
+CMD ["node", "server/dist/server/index.js"] 
