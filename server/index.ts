@@ -4,6 +4,8 @@ import { fileURLToPath } from "url";
 import { config } from "dotenv";
 import { chatRouter } from "./api/chat.js";
 import { calculationsRouter } from "./api/calculations.js";
+import { performanceRouter } from "./api/performance.js";
+import { performanceScheduler } from "./scheduler.js";
 
 // Load environment variables
 config();
@@ -17,10 +19,12 @@ const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // For Slack form-encoded payloads
 
 // API routes
 app.use("/api/chat", chatRouter);
 app.use("/api/calculations", calculationsRouter);
+app.use("/api/performance", performanceRouter);
 
 // Serve static files in production
 if (process.env.NODE_ENV === "production") {
@@ -48,4 +52,7 @@ if (process.env.NODE_ENV === "production") {
 app.listen(Number(port), "0.0.0.0", () => {
   console.log(`Starting server on port ${port}`);
   console.log(`Server running at http://0.0.0.0:${port}`);
+
+  // Initialize the performance scheduler
+  performanceScheduler.start();
 });
